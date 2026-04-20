@@ -31,16 +31,16 @@ export function ModernLoginForm() {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="relative min-h-screen w-full overflow-hidden bg-slate-950 flex items-center justify-center p-4">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl"
+          className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-500/5 blur-3xl"
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 8, repeat: Infinity }}
         />
         <motion.div
-          className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-purple-500/10 blur-3xl"
+          className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-500/5 blur-3xl"
           animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.3, 0.5] }}
           transition={{ duration: 8, repeat: Infinity, delay: 4 }}
         />
@@ -58,14 +58,14 @@ export function ModernLoginForm() {
         </motion.div>
 
         {/* Card */}
-        <Card className="border-slate-700 shadow-2xl">
+        <Card className="border-slate-800 shadow-2xl bg-slate-900">
           <motion.div className="space-y-6" variants={containerVariants}>
             {/* Header */}
             <motion.div className="text-center" variants={itemVariants}>
-              <div className="mb-4 inline-flex rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-3">
+              <div className="mb-4 inline-flex rounded-xl bg-slate-800 p-3 border border-slate-700">
                 <LogIn className="h-6 w-6 text-blue-400" />
               </div>
-              <h1 className="text-2xl font-bold text-slate-100">Employee Login</h1>
+              <h1 className="text-2xl font-bold text-white">Employee Login</h1>
               <p className="mt-2 text-sm text-slate-400">
                 Sign in with your Employee ID or Email
               </p>

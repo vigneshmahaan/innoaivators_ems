@@ -25,8 +25,8 @@ export function Logo({ size = "md", showText = true, href = "/" }: LogoProps) {
       transition={{ duration: 0.5 }}
     >
       <motion.div
-        className="rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 p-2"
-        whileHover={{ scale: 1.1, rotate: 5 }}
+        className="rounded-xl bg-blue-600 p-2 shadow-lg shadow-blue-500/20"
+        whileHover={{ scale: 1.05, rotate: 2 }}
         whileTap={{ scale: 0.95 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
@@ -35,7 +35,7 @@ export function Logo({ size = "md", showText = true, href = "/" }: LogoProps) {
       {showText && (
         <div className="flex flex-col">
           <motion.h1
-            className={`${sizes[size].text} font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent`}
+            className={`${sizes[size].text} font-bold text-white tracking-tight`}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -43,12 +43,12 @@ export function Logo({ size = "md", showText = true, href = "/" }: LogoProps) {
             INNOAIVATORS
           </motion.h1>
           <motion.p
-            className="text-xs text-slate-400 font-medium tracking-wider"
+            className="text-[9px] text-slate-500 font-bold uppercase tracking-[0.2em] -mt-1"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            EMPLOYEES MANAGEMENT SYSTEM
+            TECHNOLOGIES
           </motion.p>
         </div>
       )}
@@ -69,7 +69,7 @@ export function Logo({ size = "md", showText = true, href = "/" }: LogoProps) {
 export function LogoMini() {
   return (
     <motion.div
-      className="rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 p-2"
+      className="rounded-lg bg-blue-600 p-2 shadow-lg shadow-blue-500/20"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >

@@ -33,25 +33,22 @@ export function AdminLayoutClient({
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="flex min-h-screen flex-col bg-slate-950">
       <Navigation
         links={navigationLinks}
+        userName={user.name}
+        userEmail={user.email}
+        userRole="Administrator"
         showLogout={true}
         onLogout={handleLogout}
-      >
-        <div className="flex items-center gap-3 rounded-lg border border-slate-600 bg-slate-700/30 px-4 py-2 text-sm text-slate-200">
-          <Shield size={16} className="text-purple-400" />
-          <span className="font-medium">{user.name}</span>
-          <span className="text-xs text-slate-500">(Admin)</span>
-        </div>
-      </Navigation>
+      />
 
       <main className="flex-1">
         <div className="container-app py-8 animate-fade-in">{children}</div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-700 bg-slate-900/50 py-4 text-center text-sm text-slate-500">
+      <footer className="border-t border-slate-900 bg-slate-950/50 py-6 text-center text-xs text-slate-600 tracking-wider">
         © {new Date().getFullYear()} INNOAIVATORS TECHNOLOGIES. All rights reserved.
       </footer>
     </div>

@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,7 +33,10 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${inter.variable} ${robotoMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">{children}</body>
+      <body className="min-h-full flex flex-col bg-slate-950">
+        {children}
+        <Toaster richColors position="top-right" />
+      </body>
     </html>
   );
 }

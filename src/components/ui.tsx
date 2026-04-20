@@ -6,7 +6,7 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
   return (
     <div
       className={cn(
-        "glass rounded-lg border border-slate-700 p-6 shadow-lg transition-all duration-300 hover:border-slate-600 hover:shadow-xl",
+        "bg-slate-900 rounded-xl border border-slate-800 p-6 shadow-xl transition-all duration-300 hover:border-slate-700",
         className
       )}
       {...props}
@@ -37,16 +37,16 @@ export function Button({
 
   const variantStyles = {
     default:
-      "bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl",
+      "bg-blue-600 text-white hover:bg-blue-700 shadow-md active:scale-[0.98]",
     outline:
-      "border-2 border-slate-500 text-slate-100 hover:bg-slate-700/50 hover:border-slate-400",
-    ghost: "text-slate-300 hover:bg-slate-700/50 hover:text-slate-100",
+      "border border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white hover:border-slate-600",
+    ghost: "text-slate-400 hover:bg-slate-800 hover:text-white",
     destructive:
-      "bg-red-600 text-white hover:bg-red-700 shadow-lg hover:shadow-xl",
+      "bg-red-600 text-white hover:bg-red-700 shadow-md active:scale-[0.98]",
     secondary:
-      "bg-purple-600 text-white hover:bg-purple-700 shadow-lg hover:shadow-xl",
+      "bg-slate-800 text-slate-200 hover:bg-slate-700 shadow-md active:scale-[0.98]",
     gradient:
-      "bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 text-white hover:shadow-xl",
+      "bg-blue-600 text-white hover:bg-blue-700 shadow-md", // Replaced gradient with solid blue
   };
 
   return (

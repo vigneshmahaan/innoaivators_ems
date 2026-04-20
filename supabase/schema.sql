@@ -66,3 +66,18 @@ create table if not exists public.employee_rewards (
 create index if not exists idx_attendance_user_date on public.attendance(user_id, date desc);
 create index if not exists idx_logs_user_date on public.daily_logs(user_id, date desc);
 create index if not exists idx_perf_user_date on public.performance_stats(user_id, date desc);
+
+create table if not exists public.tasks (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text,
+  admin_id uuid not null references public.users(id) on delete cascade,
+  employee_id uuid not null references public.users(id) on delete cascade,
+  assign_date timestamptz not null default now(),
+  deadline timestamptz not null,
+  status text not null default 'Pending' check (status in ('Pending', 'In Progress', 'Completed', 'Cancelled')),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_tasks_employee_date on public.tasks(employee_id, assign_date desc);
+create index if not exists idx_tasks_admin_date on public.tasks(admin_id, assign_date desc);

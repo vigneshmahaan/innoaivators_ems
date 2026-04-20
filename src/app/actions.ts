@@ -359,3 +359,65 @@ export async function resetPasswordAction(formData: FormData) {
 
   await supabase.from("users").update({ is_first_login: true }).eq("id", userId);
 }
+
+export async function assignTaskAction(_: { error?: string } | undefined, formData: FormData) {
+  try {
+    const admin = await requireRole("admin");
+    const supabase = await createClient();
+
+    const employee_id = String(formData.get("employee_id") ?? "");
+    const title = String(formData.get("title") ?? "").trim();
+    const description = String(formData.get("description") ?? "").trim();
+    const deadline = String(formData.get("deadline") ?? "");
+
+    console.log(`[ASSIGN_TASK] Admin ${admin.name} (${admin.id}) assigning task to employee ${employee_id}`);
+    const { data: inserted, error } = await supabase.from("tasks").insert({
+      title,
+      description,
+      admin_id: admin.id,
+      employee_id,
+      deadline: new Date(deadline).toISOString(),
+      status: "Pending",
+    }).select().single();
+
+    if (error) {
+      console.error("[ASSIGN_TASK] Supabase error:", error);
+      return { error: "Failed to assign task. Please try again." };
+    }
+
+    console.log("[ASSIGN_TASK] Success! Task ID:", inserted.id);
+
+    revalidatePath("/admin/employees");
+    revalidatePath("/tasks");
+    revalidatePath("/dashboard");
+    revalidatePath("/", "layout");
+    return { error: undefined };
+  } catch (err) {
+    console.error("[ASSIGN_TASK] Unexpected error:", err);
+    return { error: "An unexpected error occurred." };
+  }
+}
+
+export async function updateTaskStatusAction(taskId: string, status: string) {
+  try {
+    await requireAuth();
+    const supabase = await createClient();
+
+    const { error } = await supabase
+      .from("tasks")
+      .update({ status })
+      .eq("id", taskId);
+
+    if (error) {
+      console.error("Error updating task status:", error);
+      return { error: "Failed to update task status." };
+    }
+
+    revalidatePath("/tasks");
+    revalidatePath("/dashboard");
+    return { error: undefined };
+  } catch (err) {
+    console.error("Error in updateTaskStatusAction:", err);
+    return { error: "An unexpected error occurred." };
+  }
+}

@@ -5,8 +5,12 @@ export async function getEmployeeDashboardData(userId: string) {
   const supabase = await createClient();
   const today = format(new Date(), "yyyy-MM-dd");
 
-  const [{ data: attendance }, { data: logs }, { data: performance }] =
-    await Promise.all([
+  const [
+    { data: attendance }, 
+    { data: logs }, 
+    { data: performance },
+    { data: tasks }
+  ] = await Promise.all([
       supabase
         .from("attendance")
         .select("date,total_hours,login_time")
@@ -25,10 +29,18 @@ export async function getEmployeeDashboardData(userId: string) {
         .eq("user_id", userId)
         .order("date", { ascending: false })
         .limit(30),
+      supabase
+        .from("tasks")
+        .select("*, admin:admin_id(name)")
+        .eq("employee_id", userId)
+        .order("assign_date", { ascending: false })
+        .limit(10),
     ]);
 
   const totalHours = (attendance ?? []).reduce((acc, item) => acc + (item.total_hours ?? 0), 0);
   const tasksCompleted = (logs ?? []).filter((l) => l.status === "Completed").length;
+  const pendingTasksCount = (tasks ?? []).filter((t) => t.status === "Pending" || t.status === "In Progress").length;
+  
   const attendancePercentage =
     attendance && attendance.length > 0
       ? Math.round((attendance.filter((item) => Boolean(item.login_time)).length / attendance.length) * 100)
@@ -48,7 +60,8 @@ export async function getEmployeeDashboardData(userId: string) {
     attendance: attendance ?? [],
     logs: logs ?? [],
     performance: performance ?? [],
-    stats: { totalHours, attendancePercentage, tasksCompleted, productivityScore },
+    tasks: tasks ?? [],
+    stats: { totalHours, attendancePercentage, tasksCompleted, productivityScore, pendingTasksCount },
     hasTodayAttendance,
   };
 }
@@ -57,17 +70,27 @@ export async function getAdminDashboardData() {
   const supabase = await createClient();
   const today = format(new Date(), "yyyy-MM-dd");
 
-  const [{ count: totalEmployees }, { count: activeToday }, { data: attendance }, { data: topPerformers }] =
-    await Promise.all([
-      supabase.from("users").select("*", { count: "exact", head: true }).eq("role", "employee"),
-      supabase.from("attendance").select("*", { count: "exact", head: true }).eq("date", today),
-      supabase.from("attendance").select("total_hours,date").order("date", { ascending: false }).limit(100),
-      supabase
-        .from("monthly_summary")
-        .select("final_score,tasks_completed,attendance_percentage,users(name,employee_id)")
-        .order("final_score", { ascending: false })
-        .limit(10),
-    ]);
+  const [
+    { count: totalEmployees }, 
+    { count: activeToday }, 
+    { data: attendance }, 
+    { data: topPerformers },
+    { data: recentLogs }
+  ] = await Promise.all([
+    supabase.from("users").select("*", { count: "exact", head: true }).eq("role", "employee"),
+    supabase.from("attendance").select("*", { count: "exact", head: true }).eq("date", today),
+    supabase.from("attendance").select("total_hours,date").order("date", { ascending: false }).limit(100),
+    supabase
+      .from("monthly_summary")
+      .select("final_score,tasks_completed,attendance_percentage,users(name,employee_id)")
+      .order("final_score", { ascending: false })
+      .limit(10),
+    supabase
+      .from("daily_logs")
+      .select("*, users(name, employee_id)")
+      .order("date", { ascending: false })
+      .limit(5)
+  ]);
 
   const totalHours = (attendance ?? []).reduce((acc, item) => acc + (item.total_hours ?? 0), 0);
   const averageProductivity =
@@ -85,5 +108,6 @@ export async function getAdminDashboardData() {
     totalHours,
     averageProductivity,
     topPerformers: topPerformers ?? [],
+    recentLogs: recentLogs ?? []
   };
 }

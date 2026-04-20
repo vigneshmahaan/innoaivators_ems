@@ -46,3 +46,20 @@ create policy "employees own rewards, admins all"
 on public.employee_rewards for all
 using (user_id = auth.uid() or public.current_user_role() = 'admin')
 with check (user_id = auth.uid() or public.current_user_role() = 'admin');
+
+-- Tasks policies
+alter table public.tasks enable row level security;
+
+create policy "Admins can manage all tasks"
+on public.tasks for all
+using (public.current_user_role() = 'admin')
+with check (public.current_user_role() = 'admin');
+
+create policy "Employees can view own tasks"
+on public.tasks for select
+using (employee_id = auth.uid());
+
+create policy "Employees can update their own task status"
+on public.tasks for update
+using (employee_id = auth.uid())
+with check (employee_id = auth.uid());

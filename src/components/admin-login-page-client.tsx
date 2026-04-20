@@ -9,16 +9,16 @@ import { UserPlus } from "lucide-react";
 
 export function AdminLoginPageClient() {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="relative min-h-screen w-full overflow-hidden bg-slate-950 flex items-center justify-center p-4">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-purple-500/10 blur-3xl"
+          className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-500/5 blur-3xl"
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 8, repeat: Infinity }}
         />
         <motion.div
-          className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl"
+          className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-500/5 blur-3xl"
           animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.3, 0.5] }}
           transition={{ duration: 8, repeat: Infinity, delay: 4 }}
         />
@@ -36,7 +36,7 @@ export function AdminLoginPageClient() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <Card className="border-slate-700 shadow-2xl">
+          <Card className="border-slate-800 shadow-2xl bg-slate-900">
             <ModernAdminLoginForm />
           </Card>
         </motion.div>
@@ -50,7 +50,7 @@ export function AdminLoginPageClient() {
         >
           <Link
             href="/admin-signup"
-            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-3 font-semibold text-white transition-all hover:shadow-lg hover:shadow-purple-500/50"
+            className="inline-flex items-center gap-2 rounded-lg bg-slate-800 px-6 py-3 font-semibold text-slate-200 border border-slate-700 transition-all hover:bg-slate-700 hover:text-white"
           >
             <UserPlus className="h-5 w-5" />
             Create New Admin

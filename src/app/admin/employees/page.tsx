@@ -1,7 +1,6 @@
-import { resetPasswordAction } from "@/app/actions";
 import { AddEmployeeForm } from "@/components/add-employee-form";
-import { Button, Card, Input, Badge } from "@/components/ui";
-import { ModernTable, ModernTableHeader, ModernTableBody, ModernTableRow, ModernTableCell } from "@/components/modern-table";
+import { Card } from "@/components/ui";
+import { EmployeeManagementClient } from "@/components/employee-management-client";
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -11,51 +10,31 @@ export default async function AdminEmployeesPage() {
   const { data: users } = await supabase
     .from("users")
     .select("id,employee_id,name,email,role,department,status")
+    .eq("role", "employee")
     .order("name");
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Employee Management</h1>
-      <Card>
-        <h2 className="mb-4 text-lg font-semibold">Add Employee</h2>
+    <div className="space-y-8 pb-12">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-100">
+          Employee Management
+        </h1>
+        <p className="text-slate-400">Add, manage and assign tasks to your workforce.</p>
+      </div>
+
+      <Card className="border-blue-500/20 bg-blue-500/5">
+        <h2 className="mb-4 text-xl font-bold text-slate-100">Add New Employee</h2>
         <AddEmployeeForm />
       </Card>
-      <div>
-        <h2 className="mb-4 text-lg font-semibold">Employees</h2>
-        <ModernTable>
-          <ModernTableHeader>
-            <tr>
-              <ModernTableCell header>ID</ModernTableCell>
-              <ModernTableCell header>Name</ModernTableCell>
-              <ModernTableCell header>Email</ModernTableCell>
-              <ModernTableCell header>Department</ModernTableCell>
-              <ModernTableCell header>Status</ModernTableCell>
-              <ModernTableCell header>Reset Password</ModernTableCell>
-            </tr>
-          </ModernTableHeader>
-          <ModernTableBody>
-            {(users ?? []).map((u, idx) => (
-              <ModernTableRow key={u.id} index={idx}>
-                <ModernTableCell>{u.employee_id}</ModernTableCell>
-                <ModernTableCell>{u.name}</ModernTableCell>
-                <ModernTableCell className="text-xs">{u.email}</ModernTableCell>
-                <ModernTableCell>{u.department || "-"}</ModernTableCell>
-                <ModernTableCell>
-                  <Badge variant={u.status === "active" ? "success" : "error"}>
-                    {u.status}
-                  </Badge>
-                </ModernTableCell>
-                <ModernTableCell>
-                  <form action={resetPasswordAction} className="flex gap-2">
-                    <input type="hidden" name="user_id" value={u.id} />
-                    <Input name="new_password" placeholder="New password" required className="h-8 text-xs" />
-                    <Button type="submit" variant="outline" size="sm">Reset</Button>
-                  </form>
-                </ModernTableCell>
-              </ModernTableRow>
-            ))}
-          </ModernTableBody>
-        </ModernTable>
+
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-slate-100">Active Employees</h2>
+          <span className="rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-slate-400 border border-slate-700">
+            {users?.length || 0} Total
+          </span>
+        </div>
+        <EmployeeManagementClient users={users || []} />
       </div>
     </div>
   );

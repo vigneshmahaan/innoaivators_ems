@@ -50,7 +50,7 @@ export function ModernTableHeader({
 }: ModernTableHeaderProps) {
   return (
     <thead className={cn(
-      "bg-gradient-to-r from-slate-800 to-slate-900 border-b-2 border-slate-600",
+      "bg-slate-900 border-b border-slate-700",
       className
     )}>
       {children}
