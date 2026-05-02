@@ -1,255 +1,263 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import { Menu, X, ChevronDown, User, History, KeyRound, LogOut } from "lucide-react";
-import { Logo } from "./logo";
+"use client";
 
-interface NavLink {
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  LayoutDashboard, Users, ClipboardList, Calendar,
+  FileText, Bell, LogOut, Menu, X, ChevronRight,
+  UserCircle, Clock, BarChart3, DollarSign, Building2,
+  Settings, Key, Megaphone, Shield, Flag, Award, FileUp
+} from "lucide-react";
+import { logoutAction } from "@/app/actions/auth";
+import type { UserProfile, Notification } from "@/lib/types";
+
+interface SidebarProps {
+  user: UserProfile;
+  notifications?: Notification[];
+}
+
+interface NavItem {
   label: string;
   href: string;
-  icon?: React.ReactNode;
+  icon: React.ReactNode;
+  badge?: number;
 }
 
-interface NavigationProps {
-  links: NavLink[];
-  dropdownLinks?: NavLink[];
-  userName?: string;
-  userEmail?: string;
-  userRole?: string;
-  showLogout?: boolean;
-  onLogout?: () => void;
-  children?: React.ReactNode;
+interface NavSection {
+  label?: string;
+  items: NavItem[];
 }
 
-export function Navigation({
-  links,
-  dropdownLinks = [],
-  userName,
-  userEmail,
-  userRole,
-  showLogout = false,
-  onLogout,
-  children,
-}: NavigationProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+function getEmployeeNav(unread: number): NavSection[] {
+  return [
+    {
+      label: "Workspace",
+      items: [
+        { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={18} /> },
+        { label: "Attendance", href: "/attendance", icon: <Clock size={18} /> },
+        { label: "Daily Log", href: "/daily-log", icon: <FileText size={18} /> },
+        {
+          label: "My Tasks",
+          href: "/tasks",
+          icon: <ClipboardList size={18} />,
+        },
+        { label: "Leave Requests", href: "/leave", icon: <Calendar size={18} /> },
+      ],
+    },
+    {
+      label: "History",
+      items: [
+        { label: "Work History", href: "/history", icon: <BarChart3 size={18} /> },
+      ],
+    },
+    {
+      label: "Account",
+      items: [
+        { label: "My Profile", href: "/profile", icon: <UserCircle size={18} /> },
+        { label: "Change Password", href: "/change-password", icon: <Key size={18} /> },
+      ],
+    },
+  ];
+}
 
+function getAdminNav(pending: { leaves: number; tasks: number }): NavSection[] {
+  return [
+    {
+      label: "Overview",
+      items: [
+        { label: "Dashboard", href: "/admin/dashboard", icon: <LayoutDashboard size={18} /> },
+      ],
+    },
+    {
+      label: "Management",
+      items: [
+        { label: "Employees", href: "/admin/employees", icon: <Users size={18} /> },
+        {
+          label: "Tasks",
+          href: "/admin/tasks",
+          icon: <ClipboardList size={18} />,
+          badge: pending.tasks > 0 ? pending.tasks : undefined,
+        },
+        {
+          label: "Leave Requests",
+          href: "/admin/leaves",
+          icon: <Calendar size={18} />,
+          badge: pending.leaves > 0 ? pending.leaves : undefined,
+        },
+        { label: "Attendance", href: "/admin/attendance", icon: <Clock size={18} /> },
+        { label: "Documents", href: "/admin/documents", icon: <FileUp size={18} /> },
+        { label: "Payroll", href: "/admin/payroll", icon: <DollarSign size={18} /> },
+      ],
+    },
+    {
+      label: "Organization",
+      items: [
+        { label: "Departments", href: "/admin/departments", icon: <Building2 size={18} /> },
+        { label: "Designations", href: "/admin/designations", icon: <Award size={18} /> },
+        { label: "Holidays", href: "/admin/holidays", icon: <Flag size={18} /> },
+        { label: "Announcements", href: "/admin/announcements", icon: <Megaphone size={18} /> },
+      ],
+    },
+    {
+      label: "Analytics",
+      items: [
+        { label: "Reports", href: "/admin/reports", icon: <BarChart3 size={18} /> },
+        { label: "Audit Logs", href: "/admin/audit-logs", icon: <Shield size={18} /> },
+      ],
+    },
+    {
+      label: "Configuration",
+      items: [
+        { label: "Settings", href: "/admin/settings", icon: <Settings size={18} /> },
+      ],
+    },
+  ];
+}
+
+export function Sidebar({
+  user,
+  notifications = [],
+  pendingLeaves = 0,
+  pendingTasks = 0,
+}: SidebarProps & { pendingLeaves?: number; pendingTasks?: number }) {
+  const pathname = usePathname();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const unread = notifications.filter((n) => !n.is_read).length;
+
+  const isAdmin = user.role === "admin";
+  const sections = isAdmin
+    ? getAdminNav({ leaves: pendingLeaves, tasks: pendingTasks })
+    : getEmployeeNav(unread);
+
+  // Close on route change (mobile)
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    setIsMobileOpen(false);
+  }, [pathname]);
 
-  const menuVariants = {
-    hidden: { opacity: 0, x: "-100%" },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
-    exit: { opacity: 0, x: "-100%", transition: { duration: 0.2 } },
-  };
-
-  const linkVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      x: 0,
-      transition: { delay: i * 0.1, duration: 0.3 },
-    }),
-  };
-
-  const dropdownVariants = {
-    hidden: { opacity: 0, y: -10, scale: 0.95 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.2 } },
-    exit: { opacity: 0, y: -10, scale: 0.95, transition: { duration: 0.15 } },
-  };
-
-  return (
-    <nav className="sticky top-0 z-50 glass border-b border-slate-700/50">
-      <div className="container-app">
-        <div className="flex items-center justify-between py-3">
-          {/* Logo */}
-          <Logo size="md" href="/" />
-
-          {/* Desktop Navigation */}
-          <div className="hidden items-center gap-6 md:flex">
-            {links.map((link, i) => (
-              <motion.div
-                key={link.href}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Link
-                  href={link.href}
-                  className="flex items-center gap-2 text-sm font-medium text-slate-400 transition-colors duration-200 hover:text-white"
-                >
-                  {link.icon && <span className="opacity-70">{link.icon}</span>}
-                  <span>{link.label}</span>
-                </Link>
-              </motion.div>
-            ))}
-
-            {children}
-
-            {/* Profile Dropdown */}
-            {(userName || dropdownLinks.length > 0) && (
-              <div className="relative" ref={dropdownRef}>
-                <motion.button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-3 rounded-full border border-slate-700 bg-slate-800/40 pl-3 pr-2 py-1.5 transition-all hover:bg-slate-800/80 hover:border-slate-500"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <div className="flex flex-col items-end">
-                    <span className="text-xs font-semibold text-slate-200 leading-tight">{userName || "User"}</span>
-                    <span className="text-[10px] text-slate-500 font-medium uppercase tracking-tighter">{userRole || "Member"}</span>
-                  </div>
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-blue-500/20">
-                    {(userName || "U").charAt(0).toUpperCase()}
-                  </div>
-                  <ChevronDown size={14} className={`text-slate-500 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`} />
-                </motion.button>
-
-                <AnimatePresence>
-                  {isDropdownOpen && (
-                    <motion.div
-                      variants={dropdownVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      className="absolute right-0 mt-2 w-56 origin-top-right overflow-hidden rounded-xl border border-slate-700 bg-slate-900 shadow-2xl ring-1 ring-black ring-opacity-5"
-                    >
-                      <div className="p-2 space-y-1">
-                        {dropdownLinks.map((link) => (
-                          <Link
-                            key={link.href}
-                            href={link.href}
-                            onClick={() => setIsDropdownOpen(false)}
-                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-400 transition-all hover:bg-slate-800 hover:text-white"
-                          >
-                            <span className="opacity-70">{link.icon}</span>
-                            {link.label}
-                          </Link>
-                        ))}
-                        
-                        {showLogout && onLogout && (
-                          <>
-                            <div className="my-1 border-t border-slate-700/50" />
-                            <button
-                              onClick={() => {
-                                onLogout();
-                                setIsDropdownOpen(false);
-                              }}
-                              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-red-400 transition-all hover:bg-red-500/10 hover:text-red-300"
-                            >
-                              <LogOut size={16} className="opacity-70" />
-                              Logout
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
+  const sidebarContent = (
+    <div className="flex h-full flex-col">
+      {/* Logo / Branding */}
+      <div className="sidebar-header">
+        <Link href={isAdmin ? "/admin/dashboard" : "/dashboard"} className="flex items-center gap-3">
+          <div
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-white font-black text-sm"
+            style={{ background: "var(--brand)", boxShadow: "0 4px 12px var(--brand-glow)" }}
+          >
+            EMS
           </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex items-center gap-3 md:hidden">
-            <motion.button
-              onClick={() => setIsOpen(!isOpen)}
-              className="rounded-lg p-2 text-slate-300 hover:bg-slate-800"
-              whileTap={{ scale: 0.95 }}
+          <div>
+            <div className="text-sm font-bold text-white leading-tight">INNOAIVATORS</div>
+            <div
+              className="text-[10px] font-semibold uppercase tracking-widest"
+              style={{ color: "var(--text-muted)" }}
             >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </motion.button>
+              {isAdmin ? "Admin Portal" : "Employee Portal"}
+            </div>
+          </div>
+        </Link>
+      </div>
+
+      {/* Navigation */}
+      <nav className="sidebar-nav">
+        {sections.map((section, si) => (
+          <div key={si} className="mb-2">
+            {section.label && (
+              <p className="nav-label">{section.label}</p>
+            )}
+            {section.items.map((item) => {
+              const isActive =
+                pathname === item.href || pathname.startsWith(item.href + "/");
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`nav-item ${isActive ? "active" : ""}`}
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  <span className="flex-1">{item.label}</span>
+                  {item.badge ? (
+                    <span className="nav-badge">{item.badge}</span>
+                  ) : null}
+                  {isActive && !item.badge && (
+                    <ChevronRight size={14} style={{ color: "var(--brand)", opacity: 0.6 }} />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
+      </nav>
+
+      {/* Footer: User Info + Logout */}
+      <div className="sidebar-footer">
+        <div
+          className="mb-3 flex items-center gap-3 rounded-xl p-2.5"
+          style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)" }}
+        >
+          <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
+            style={{ background: "var(--brand)" }}
+          >
+            {user.name.charAt(0).toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+              {user.name}
+            </div>
+            <div className="truncate text-xs" style={{ color: "var(--text-muted)" }}>
+              {user.employee_id} · {user.role}
+            </div>
           </div>
         </div>
-
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              variants={menuVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              className="fixed inset-0 top-[60px] z-40 w-full bg-slate-950/98 backdrop-blur-xl md:hidden"
-            >
-              <div className="container-app h-full flex flex-col py-6 overflow-y-auto">
-                {/* User Info Mobile */}
-                {userName && (
-                  <div className="mb-8 flex items-center gap-4 px-4 py-4 rounded-2xl bg-slate-900 border border-slate-800">
-                    <div className="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center text-white text-xl font-bold">
-                      {userName.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-lg font-bold text-white">{userName}</span>
-                      <span className="text-sm text-slate-500">{userEmail}</span>
-                    </div>
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <p className="px-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Main Menu</p>
-                  {links.map((link, i) => (
-                    <motion.div key={link.href} custom={i} variants={linkVariants}>
-                      <Link
-                        href={link.href}
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center gap-4 rounded-xl px-4 py-3 text-slate-300 transition-all active:bg-slate-900 hover:bg-slate-900"
-                      >
-                        <span className="p-2 rounded-lg bg-slate-900 text-blue-400">{link.icon}</span>
-                        <span className="font-medium">{link.label}</span>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="mt-8 space-y-2">
-                  <p className="px-4 text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-2">Account</p>
-                  {dropdownLinks.map((link, i) => (
-                    <motion.div key={link.href} custom={links.length + i} variants={linkVariants}>
-                      <Link
-                        href={link.href}
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center gap-4 rounded-xl px-4 py-3 text-slate-400 transition-all hover:bg-slate-900"
-                      >
-                        <span className="p-2 rounded-lg bg-slate-900">{link.icon}</span>
-                        <span className="font-medium">{link.label}</span>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {showLogout && onLogout && (
-                  <motion.div 
-                    custom={links.length + dropdownLinks.length} 
-                    variants={linkVariants}
-                    className="mt-auto pt-8 pb-12"
-                  >
-                    <button
-                      onClick={() => {
-                        onLogout();
-                        setIsOpen(false);
-                      }}
-                      className="flex w-full items-center justify-center gap-3 rounded-xl bg-red-500/10 py-4 font-bold text-red-500 transition-all active:scale-95"
-                    >
-                      <LogOut size={20} />
-                      Sign Out
-                    </button>
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <form action={logoutAction}>
+          <button type="submit" className="nav-item w-full text-left" style={{ color: "var(--danger)" }}>
+            <LogOut size={17} className="nav-icon" />
+            <span>Sign Out</span>
+          </button>
+        </form>
       </div>
-    </nav>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="sidebar hidden md:flex">{sidebarContent}</aside>
+
+      {/* Mobile Toggle Button */}
+      <button
+        className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl md:hidden"
+        style={{ background: "var(--bg-card)", border: "1px solid var(--border-default)" }}
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+      >
+        {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {isMobileOpen && (
+          <>
+            <motion.div
+              className="sidebar-overlay visible"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileOpen(false)}
+            />
+            <motion.aside
+              className="sidebar open"
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            >
+              {sidebarContent}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
-

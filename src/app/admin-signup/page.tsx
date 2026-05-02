@@ -1,18 +1,16 @@
 import { redirect } from "next/navigation";
 import { getCurrentUserProfile } from "@/lib/auth";
-import { AdminSignupPageClient } from "@/components/admin-signup-page-client";
+import { AdminSignupForm } from "@/components/admin-signup-form";
 
 export default async function AdminSignupPage() {
-  const profile = await getCurrentUserProfile();
-
-  // If already logged in, redirect to their dashboard
-  if (profile) {
-    if (profile.role === "admin") {
-      redirect("/admin/dashboard");
-    } else {
-      redirect("/employee/dashboard");
-    }
+  const user = await getCurrentUserProfile();
+  if (user) {
+    redirect(user.role === "admin" ? "/admin/dashboard" : "/dashboard");
   }
 
-  return <AdminSignupPageClient />;
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "var(--bg-base)" }}>
+      <AdminSignupForm />
+    </div>
+  );
 }

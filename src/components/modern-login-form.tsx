@@ -1,178 +1,385 @@
 "use client";
 
-import { useState } from "react";
 import { useActionState } from "react";
-import { motion } from "framer-motion";
-import { LogIn, Mail, Lock, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { LogIn, Mail, Lock, ArrowRight, AlertCircle, Building2 } from "lucide-react";
 import { loginAction } from "@/app/actions";
-import { Button, Input, Card, Alert, Spinner } from "@/components/ui";
-import { Logo } from "./logo";
+import Link from "next/link";
 
 export function ModernLoginForm() {
   const [state, formAction, isPending] = useActionState(loginAction, { error: "" });
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
-
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0 },
-  };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-slate-950 flex items-center justify-center p-4">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-500/5 blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-500/5 blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.3, 0.5] }}
-          transition={{ duration: 8, repeat: Infinity, delay: 4 }}
-        />
-      </div>
+    <div
+      style={{
+        position: "relative",
+        minHeight: "100vh",
+        width: "100%",
+        background: "#040810",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "1.5rem",
+        overflow: "hidden",
+      }}
+    >
+      {/* Ambient glow blobs */}
+      <div
+        style={{
+          position: "absolute",
+          top: -120,
+          right: -100,
+          width: 500,
+          height: 500,
+          borderRadius: "50%",
+          background: "rgba(79,142,247,0.08)",
+          filter: "blur(80px)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: -80,
+          left: -80,
+          width: 380,
+          height: 380,
+          borderRadius: "50%",
+          background: "rgba(139,92,246,0.06)",
+          filter: "blur(80px)",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* Grid texture */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px)",
+          backgroundSize: "48px 48px",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent)",
+          maskImage:
+            "radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent)",
+          pointerEvents: "none",
+        }}
+        aria-hidden
+      />
 
       <motion.div
-        className="relative w-full max-w-md"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+        style={{
+          position: "relative",
+          zIndex: 1,
+          width: "100%",
+          maxWidth: 420,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "1.5rem",
+        }}
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
-        {/* Logo */}
-        <motion.div className="mb-8 text-center" variants={itemVariants}>
-          <Logo size="lg" showText={true} href="/" />
-        </motion.div>
+        {/* Brand */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 44,
+              height: 44,
+              background: "#4f8ef7",
+              borderRadius: 12,
+              color: "#fff",
+              boxShadow:
+                "0 0 0 1px rgba(79,142,247,0.3), 0 8px 24px rgba(79,142,247,0.3)",
+            }}
+          >
+            <Building2 size={22} />
+          </div>
+          <div>
+            <div
+              style={{
+                fontSize: "1.125rem",
+                fontWeight: 800,
+                color: "#fff",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              INNOAIVATORS
+            </div>
+            <div
+              style={{
+                fontSize: "0.72rem",
+                color: "#4d5a78",
+                fontWeight: 500,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                marginTop: 1,
+              }}
+            >
+              Employee Management System
+            </div>
+          </div>
+        </div>
 
         {/* Card */}
-        <Card className="border-slate-800 shadow-2xl bg-slate-900">
-          <motion.div className="space-y-6" variants={containerVariants}>
-            {/* Header */}
-            <motion.div className="text-center" variants={itemVariants}>
-              <div className="mb-4 inline-flex rounded-xl bg-slate-800 p-3 border border-slate-700">
-                <LogIn className="h-6 w-6 text-blue-400" />
-              </div>
-              <h1 className="text-2xl font-bold text-white">Employee Login</h1>
-              <p className="mt-2 text-sm text-slate-400">
-                Sign in with your Employee ID or Email
-              </p>
-            </motion.div>
+        <motion.div
+          style={{
+            width: "100%",
+            background: "#111827",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: 20,
+            padding: "2rem",
+            boxShadow:
+              "0 0 0 1px rgba(255,255,255,0.04) inset, 0 32px 64px rgba(0,0,0,0.5), 0 0 80px rgba(79,142,247,0.04)",
+          }}
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1, duration: 0.4 }}
+        >
+          {/* Card header */}
+          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 48,
+                height: 48,
+                background: "rgba(79,142,247,0.12)",
+                color: "#4f8ef7",
+                borderRadius: 14,
+                border: "1px solid rgba(79,142,247,0.2)",
+                marginBottom: "1rem",
+              }}
+            >
+              <LogIn size={20} />
+            </div>
+            <h1
+              style={{
+                fontSize: "1.375rem",
+                fontWeight: 800,
+                color: "#f0f4ff",
+                letterSpacing: "-0.02em",
+                marginBottom: "0.375rem",
+              }}
+            >
+              Employee Login
+            </h1>
+            <p style={{ fontSize: "0.85rem", color: "#4d5a78" }}>
+              Sign in with your Employee ID or email
+            </p>
+          </div>
 
-            {/* Error Alert */}
+          {/* Error */}
+          <AnimatePresence>
             {state.error && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  padding: "0.75rem 1rem",
+                  background: "rgba(239,68,68,0.08)",
+                  border: "1px solid rgba(239,68,68,0.2)",
+                  borderRadius: 10,
+                  color: "#f87171",
+                  fontSize: "0.875rem",
+                  marginBottom: "1rem",
+                  overflow: "hidden",
+                }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
               >
-                <Alert variant="error">
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5">
-                      <svg
-                        className="h-5 w-5 text-red-500"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </div>
-                    <span>{state.error}</span>
-                  </div>
-                </Alert>
+                <AlertCircle size={15} />
+                <span>{state.error}</span>
               </motion.div>
             )}
+          </AnimatePresence>
 
-            {/* Form */}
-            <form action={formAction} className="space-y-4">
-              {/* Employee ID / Email Input */}
-              <motion.div className="space-y-2" variants={itemVariants}>
-                <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
-                  <Mail size={16} />
-                  Employee ID or Email
-                </label>
-                <Input
-                  type="text"
-                  name="identifier"
-                  placeholder="Enter your Employee ID or Email"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  required
-                  disabled={isPending}
-                />
-              </motion.div>
+          {/* Form */}
+          <form action={formAction} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {/* Identifier */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+              <label
+                htmlFor="identifier"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.375rem",
+                  fontSize: "0.8125rem",
+                  fontWeight: 600,
+                  color: "#8b9cc4",
+                }}
+              >
+                <Mail size={14} />
+                Employee ID or Email
+              </label>
+              <input
+                id="identifier"
+                type="text"
+                name="identifier"
+                placeholder="e.g. EMP001 or name@company.com"
+                required
+                disabled={isPending}
+                autoComplete="username"
+                style={{
+                  width: "100%",
+                  background: "#1a2332",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 10,
+                  padding: "0.7rem 1rem",
+                  fontSize: "0.9rem",
+                  color: "#f0f4ff",
+                  fontFamily: "inherit",
+                  outline: "none",
+                  colorScheme: "dark" as const,
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#4f8ef7";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(79,142,247,0.12)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            </div>
 
-              {/* Password Input */}
-              <motion.div className="space-y-2" variants={itemVariants}>
-                <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
-                  <Lock size={16} />
-                  Password
-                </label>
-                <Input
-                  type="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isPending}
-                />
-              </motion.div>
+            {/* Password */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+              <label
+                htmlFor="password"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.375rem",
+                  fontSize: "0.8125rem",
+                  fontWeight: 600,
+                  color: "#8b9cc4",
+                }}
+              >
+                <Lock size={14} />
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+                disabled={isPending}
+                autoComplete="current-password"
+                style={{
+                  width: "100%",
+                  background: "#1a2332",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 10,
+                  padding: "0.7rem 1rem",
+                  fontSize: "0.9rem",
+                  color: "#f0f4ff",
+                  fontFamily: "inherit",
+                  outline: "none",
+                  colorScheme: "dark" as const,
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#4f8ef7";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(79,142,247,0.12)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            </div>
 
-              {/* Submit Button */}
-              <motion.div variants={itemVariants}>
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full"
-                  disabled={isPending}
-                >
-                  {isPending ? (
-                    <>
-                      <Spinner className="h-4 w-4" />
-                      <span>Signing in...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Sign In</span>
-                      <ArrowRight size={18} />
-                    </>
-                  )}
-                </Button>
-              </motion.div>
-            </form>
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={isPending}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                width: "100%",
+                padding: "0.75rem 1.5rem",
+                marginTop: "0.25rem",
+                background: isPending ? "#3a7ae0" : "#4f8ef7",
+                border: "none",
+                borderRadius: 10,
+                color: "#fff",
+                fontSize: "0.9375rem",
+                fontWeight: 700,
+                cursor: isPending ? "not-allowed" : "pointer",
+                boxShadow: "0 4px 16px rgba(79,142,247,0.25)",
+                fontFamily: "inherit",
+                transition: "background 0.15s, box-shadow 0.2s",
+                opacity: isPending ? 0.8 : 1,
+              }}
+            >
+              {isPending ? (
+                <>
+                  <span
+                    style={{
+                      width: 18,
+                      height: 18,
+                      border: "2px solid rgba(255,255,255,0.3)",
+                      borderTopColor: "#fff",
+                      borderRadius: "50%",
+                      display: "inline-block",
+                      animation: "spin 0.7s linear infinite",
+                    }}
+                  />
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In</span>
+                  <ArrowRight size={17} />
+                </>
+              )}
+            </button>
+          </form>
 
-            {/* Divider */}
-          
+          {/* Footer link */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.4rem",
+              marginTop: "1.25rem",
+              paddingTop: "1.25rem",
+              borderTop: "1px solid rgba(255,255,255,0.05)",
+              fontSize: "0.8125rem",
+              color: "#4d5a78",
+            }}
+          >
+            <span>Admin?</span>
+            <Link
+              href="/admin-login"
+              style={{
+                color: "#4f8ef7",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              Go to Admin Portal →
+            </Link>
+          </div>
+        </motion.div>
 
-            {/* Admin Portal Link */}
-          
-          </motion.div>
-        </Card>
-
-        {/* Footer */}
-        <motion.p
-          className="mt-6 text-center text-sm text-slate-500"
-          variants={itemVariants}
-        >
+        {/* Bottom footer */}
+        <p style={{ fontSize: "0.75rem", color: "#4d5a78", textAlign: "center" }}>
           © {new Date().getFullYear()} INNOAIVATORS TECHNOLOGIES. All rights reserved.
-        </motion.p>
+        </p>
       </motion.div>
     </div>
   );

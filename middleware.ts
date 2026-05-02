@@ -1,66 +1,91 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const employeeRoutes = ["/dashboard", "/attendance", "/daily-log", "/history", "/change-password"];
+// ✅ FIXED: Added /tasks, /profile, /leave routes — previously missing
+const employeeRoutes = [
+  "/dashboard",
+  "/attendance",
+  "/daily-log",
+  "/history",
+  "/change-password",
+  "/tasks",
+  "/profile",
+  "/leave",
+];
+
+const adminRoutes = ["/admin"];
 
 function isEmployeeRoute(pathname: string) {
-  return employeeRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+  return employeeRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
 }
+
+function isAdminRoute(pathname: string) {
+  return adminRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`)
+  );
+}
+
+const publicRoutes = ["/login", "/admin-login", "/admin-signup"];
 
 export async function middleware(request: NextRequest) {
   const { user, response, supabase } = await updateSession(request);
   const { pathname } = request.nextUrl;
 
+  // Static assets
   if (pathname.startsWith("/_next") || pathname === "/favicon.ico") {
     return response;
   }
 
-  // Allow unauthenticated access to login pages
-  if (!user && (pathname === "/login" || pathname === "/admin-login")) {
+  // Allow public routes for unauthenticated users
+  if (!user && publicRoutes.includes(pathname)) {
     return response;
   }
 
   // Redirect unauthenticated users to login
-  if (!user && pathname !== "/login" && pathname !== "/admin-login") {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (!user) {
+    const url = new URL("/login", request.url);
+    url.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(url);
   }
 
-  // If user is logged in
-  if (user) {
-    const { data: profile } = await supabase
-      .from("users")
-      .select("role,status")
-      .eq("id", user.id)
-      .maybeSingle();
+  // Fetch user profile with role and status
+  const { data: profile } = await supabase
+    .from("users")
+    .select("role,status")
+    .eq("id", user.id)
+    .maybeSingle();
 
-    if (!profile || profile.status !== "active") {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  // Inactive accounts → redirect to login
+  if (!profile || profile.status !== "active") {
+    await supabase.auth.signOut();
+    return NextResponse.redirect(new URL("/login?error=account_inactive", request.url));
+  }
 
-    // Redirect logged-in users away from login pages
-    if (pathname === "/login") {
-      const redirectPath = profile.role === "admin" ? "/admin/dashboard" : "/dashboard";
-      return NextResponse.redirect(new URL(redirectPath, request.url));
-    }
+  const { role } = profile;
 
-    if (pathname === "/admin-login") {
-      const redirectPath = profile.role === "admin" ? "/admin/dashboard" : "/dashboard";
-      return NextResponse.redirect(new URL(redirectPath, request.url));
-    }
+  // Redirect authenticated users away from public routes
+  if (publicRoutes.includes(pathname)) {
+    return NextResponse.redirect(
+      new URL(role === "admin" ? "/admin/dashboard" : "/dashboard", request.url)
+    );
+  }
 
-    // Role-based route protection
-    if (profile.role === "employee") {
-      if (pathname.startsWith("/admin")) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
-      }
-      if (!isEmployeeRoute(pathname) && pathname !== "/") {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
-      }
-    }
+  // Root redirect
+  if (pathname === "/") {
+    return NextResponse.redirect(
+      new URL(role === "admin" ? "/admin/dashboard" : "/dashboard", request.url)
+    );
+  }
 
-    if (profile.role === "admin" && isEmployeeRoute(pathname)) {
-      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
-    }
+  // Role-based access control
+  if (role === "employee" && isAdminRoute(pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  if (role === "admin" && isEmployeeRoute(pathname)) {
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }
 
   return response;

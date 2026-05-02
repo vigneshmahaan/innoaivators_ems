@@ -1,90 +1,409 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Card } from "@/components/ui";
-import { ModernAdminLoginForm } from "@/components/modern-admin-forms";
-import { Logo } from "@/components/logo";
+import { useActionState, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { LogIn, Mail, Lock, ArrowRight, AlertCircle, Building2, UserPlus } from "lucide-react";
+import { adminLoginAction } from "@/app/actions";
 import Link from "next/link";
-import { UserPlus } from "lucide-react";
 
 export function AdminLoginPageClient() {
+  const [state, formAction, isPending] = useActionState(adminLoginAction, { error: "" });
+  
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-slate-950 flex items-center justify-center p-4">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-500/5 blur-3xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-indigo-500/5 blur-3xl"
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.5, 0.3, 0.5] }}
-          transition={{ duration: 8, repeat: Infinity, delay: 4 }}
-        />
-      </div>
+    <div
+      style={{
+        position: "relative",
+        minHeight: "100vh",
+        width: "100%",
+        background: "#040810",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "1.5rem",
+        overflow: "hidden",
+      }}
+    >
+      {/* Ambient glow blobs */}
+      <div
+        style={{
+          position: "absolute",
+          top: -120,
+          right: -100,
+          width: 500,
+          height: 500,
+          borderRadius: "50%",
+          background: "rgba(139,92,246,0.08)", // Purple tint for admin
+          filter: "blur(80px)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: -80,
+          left: -80,
+          width: 380,
+          height: 380,
+          borderRadius: "50%",
+          background: "rgba(79,142,247,0.06)", // Blue tint
+          filter: "blur(80px)",
+          pointerEvents: "none",
+        }}
+      />
 
-      <div className="relative w-full max-w-md">
-        {/* Logo */}
-        <motion.div className="mb-10 text-center" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <Logo size="lg" showText={true} href="/" />
-        </motion.div>
+      {/* Grid texture */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px)",
+          backgroundSize: "48px 48px",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent)",
+          maskImage:
+            "radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent)",
+          pointerEvents: "none",
+        }}
+        aria-hidden
+      />
 
-        {/* Login Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <Card className="border-slate-800 shadow-2xl bg-slate-900">
-            <ModernAdminLoginForm />
-          </Card>
-        </motion.div>
-
-        {/* Create Admin Link */}
-        <motion.div
-          className="mt-6 text-center"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <Link
-            href="/admin-signup"
-            className="inline-flex items-center gap-2 rounded-lg bg-slate-800 px-6 py-3 font-semibold text-slate-200 border border-slate-700 transition-all hover:bg-slate-700 hover:text-white"
+      <motion.div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          width: "100%",
+          maxWidth: 420,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "1.5rem",
+        }}
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {/* Brand */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 44,
+              height: 44,
+              background: "#8b5cf6", // Purple for admin
+              borderRadius: 12,
+              color: "#fff",
+              boxShadow:
+                "0 0 0 1px rgba(139,92,246,0.3), 0 8px 24px rgba(139,92,246,0.3)",
+            }}
           >
-            <UserPlus className="h-5 w-5" />
-            Create New Admin
-          </Link>
-        </motion.div>
-
-        {/* Employee Portal Link */}
-        <motion.div
-          className="mt-6 text-center"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        >
-          <p className="text-slate-400">
-            Are you an employee?{" "}
-            <a
-              href="/login"
-              className="font-semibold text-blue-400 transition-colors hover:text-blue-300"
+            <Building2 size={22} />
+          </div>
+          <div>
+            <div
+              style={{
+                fontSize: "1.125rem",
+                fontWeight: 800,
+                color: "#fff",
+                letterSpacing: "-0.01em",
+              }}
             >
-              Go to Employee Login
-            </a>
-          </p>
+              INNOAIVATORS
+            </div>
+            <div
+              style={{
+                fontSize: "0.72rem",
+                color: "#4d5a78",
+                fontWeight: 500,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                marginTop: 1,
+              }}
+            >
+              Employee Management System
+            </div>
+          </div>
+        </div>
+
+        {/* Card */}
+        <motion.div
+          style={{
+            width: "100%",
+            background: "#111827",
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: 20,
+            padding: "2rem",
+            boxShadow:
+              "0 0 0 1px rgba(255,255,255,0.04) inset, 0 32px 64px rgba(0,0,0,0.5), 0 0 80px rgba(139,92,246,0.04)",
+          }}
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1, duration: 0.4 }}
+        >
+          {/* Card header */}
+          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 48,
+                height: 48,
+                background: "rgba(139,92,246,0.12)",
+                color: "#8b5cf6", // Purple icon
+                borderRadius: 14,
+                border: "1px solid rgba(139,92,246,0.2)",
+                marginBottom: "1rem",
+              }}
+            >
+              <LogIn size={20} />
+            </div>
+            <h1
+              style={{
+                fontSize: "1.375rem",
+                fontWeight: 800,
+                color: "#f0f4ff",
+                letterSpacing: "-0.02em",
+                marginBottom: "0.375rem",
+              }}
+            >
+              Admin Login
+            </h1>
+            <p style={{ fontSize: "0.85rem", color: "#4d5a78" }}>
+              Sign in to access admin dashboard
+            </p>
+          </div>
+
+          {/* Error */}
+          <AnimatePresence>
+            {state.error && (
+              <motion.div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  padding: "0.75rem 1rem",
+                  background: "rgba(239,68,68,0.08)",
+                  border: "1px solid rgba(239,68,68,0.2)",
+                  borderRadius: 10,
+                  color: "#f87171",
+                  fontSize: "0.875rem",
+                  marginBottom: "1rem",
+                  overflow: "hidden",
+                }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                <AlertCircle size={15} />
+                <span>{state.error}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Form */}
+          <form action={formAction} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            {/* Identifier */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+              <label
+                htmlFor="email"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.375rem",
+                  fontSize: "0.8125rem",
+                  fontWeight: 600,
+                  color: "#8b9cc4",
+                }}
+              >
+                <Mail size={14} />
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="admin@company.com"
+                required
+                disabled={isPending}
+                autoComplete="username"
+                style={{
+                  width: "100%",
+                  background: "#1a2332",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 10,
+                  padding: "0.7rem 1rem",
+                  fontSize: "0.9rem",
+                  color: "#f0f4ff",
+                  fontFamily: "inherit",
+                  outline: "none",
+                  colorScheme: "dark" as const,
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#8b5cf6";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(139,92,246,0.12)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            </div>
+
+            {/* Password */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+              <label
+                htmlFor="password"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.375rem",
+                  fontSize: "0.8125rem",
+                  fontWeight: 600,
+                  color: "#8b9cc4",
+                }}
+              >
+                <Lock size={14} />
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+                disabled={isPending}
+                autoComplete="current-password"
+                style={{
+                  width: "100%",
+                  background: "#1a2332",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 10,
+                  padding: "0.7rem 1rem",
+                  fontSize: "0.9rem",
+                  color: "#f0f4ff",
+                  fontFamily: "inherit",
+                  outline: "none",
+                  colorScheme: "dark" as const,
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#8b5cf6";
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(139,92,246,0.12)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={isPending}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                width: "100%",
+                padding: "0.75rem 1.5rem",
+                marginTop: "0.25rem",
+                background: isPending ? "#7c3aed" : "#8b5cf6",
+                border: "none",
+                borderRadius: 10,
+                color: "#fff",
+                fontSize: "0.9375rem",
+                fontWeight: 700,
+                cursor: isPending ? "not-allowed" : "pointer",
+                boxShadow: "0 4px 16px rgba(139,92,246,0.25)",
+                fontFamily: "inherit",
+                transition: "background 0.15s, box-shadow 0.2s",
+                opacity: isPending ? 0.8 : 1,
+              }}
+            >
+              {isPending ? (
+                <>
+                  <span
+                    style={{
+                      width: 18,
+                      height: 18,
+                      border: "2px solid rgba(255,255,255,0.3)",
+                      borderTopColor: "#fff",
+                      borderRadius: "50%",
+                      display: "inline-block",
+                      animation: "spin 0.7s linear infinite",
+                    }}
+                  />
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                <>
+                  <span>Sign In as Admin</span>
+                  <ArrowRight size={17} />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Footer links */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.75rem",
+              marginTop: "1.25rem",
+              paddingTop: "1.25rem",
+              borderTop: "1px solid rgba(255,255,255,0.05)",
+            }}
+          >
+            <Link
+              href="/admin-signup"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                padding: "0.6rem",
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.05)",
+                borderRadius: "8px",
+                color: "#e2e8f0",
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                textDecoration: "none",
+                transition: "background 0.15s",
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+              onMouseOut={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.03)")}
+            >
+              <UserPlus size={15} />
+              Create New Admin
+            </Link>
+            
+            <div style={{ textAlign: "center", fontSize: "0.8125rem", color: "#4d5a78" }}>
+              <span>Are you an employee? </span>
+              <Link
+                href="/login"
+                style={{
+                  color: "#4f8ef7",
+                  fontWeight: 600,
+                  textDecoration: "none",
+                }}
+              >
+                Go to Employee Login
+              </Link>
+            </div>
+          </div>
         </motion.div>
 
-        {/* Footer */}
-        <motion.p
-          className="mt-6 text-center text-sm text-slate-500"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
+        {/* Bottom footer */}
+        <p style={{ fontSize: "0.75rem", color: "#4d5a78", textAlign: "center" }}>
           © {new Date().getFullYear()} INNOAIVATORS TECHNOLOGIES. All rights reserved.
-        </motion.p>
-      </div>
+        </p>
+      </motion.div>
     </div>
   );
 }

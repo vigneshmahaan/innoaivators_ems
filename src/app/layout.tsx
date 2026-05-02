@@ -1,41 +1,41 @@
 import type { Metadata } from "next";
-import { Inter, Roboto_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 const inter = Inter({
+  subsets: ["latin"],
   variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const robotoMono = Roboto_Mono({
-  variable: "--font-roboto-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "INNOAIVATORS - TECHNOLOGIES",
-  description: "INNOAIVATORS TECHNOLOGIES - Advanced Employee Management and Performance Tracking",
-  icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23ef4444' width='100' height='100' rx='20'/><circle cx='35' cy='30' r='10' fill='white'/><path d='M25 50 L45 50 L35 85 Z' fill='white'/><rect x='50' y='35' width='35' height='25' rx='2' fill='white'/><rect x='60' y='60' width='15' height='5' fill='white'/></svg>",
+  title: {
+    default: "INNOAIVATORS EMS",
+    template: "%s | INNOAIVATORS EMS",
   },
+  description:
+    "Professional Employee Management System — attendance tracking, task management, leave requests, performance analytics, and payroll.",
+  keywords: ["EMS", "Employee Management", "HR System", "Attendance", "Tasks"],
 };
 
-import { Toaster } from "sonner";
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      data-scroll-behavior="smooth"
-      className={`${inter.variable} ${robotoMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-slate-950">
+    <html lang="en" className={inter.variable}>
+      <body>
         {children}
-        <Toaster richColors position="top-right" />
+        <Toaster
+          theme="dark"
+          position="top-right"
+          richColors
+          toastOptions={{
+            style: {
+              background: "var(--bg-card)",
+              border: "1px solid var(--border-default)",
+              color: "var(--text-primary)",
+            },
+          }}
+        />
       </body>
     </html>
   );

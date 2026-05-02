@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { UserProfile, UserRole } from "@/lib/types";
+import type { UserProfile, UserRole } from "@/lib/types";
 
 export const getCurrentUserProfile = cache(async (): Promise<UserProfile | null> => {
   const supabase = await createClient();
@@ -15,7 +15,7 @@ export const getCurrentUserProfile = cache(async (): Promise<UserProfile | null>
 
   const { data } = await supabase
     .from("users")
-    .select("id, employee_id, name, email, role, status, is_first_login")
+    .select("id, employee_id, name, email, role, status, is_first_login, department, position, phone, hire_date")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -34,6 +34,16 @@ export async function requireRole(role: UserRole) {
   const profile = await requireAuth();
   if (profile.role !== role) {
     redirect(role === "admin" ? "/dashboard" : "/admin/dashboard");
+  }
+  return profile;
+}
+
+export async function requireActiveUser() {
+  const profile = await requireAuth();
+  if (profile.status !== "active") {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    redirect("/login?error=account_inactive");
   }
   return profile;
 }

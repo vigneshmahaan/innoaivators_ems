@@ -1,41 +1,35 @@
-import { AddEmployeeForm } from "@/components/add-employee-form";
-import { Card } from "@/components/ui";
-import { EmployeeManagementClient } from "@/components/employee-management-client";
 import { requireRole } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { getAdminEmployeeList } from "@/lib/data";
+import { EmployeeManagementClient } from "@/components/employee-management-client";
+import { Users } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { title: "Employees — Admin" };
 
 export default async function AdminEmployeesPage() {
   await requireRole("admin");
-  const supabase = await createClient();
-  const { data: users } = await supabase
-    .from("users")
-    .select("id,employee_id,name,email,role,department,status")
-    .eq("role", "employee")
-    .order("name");
+  const users = await getAdminEmployeeList();
 
   return (
-    <div className="space-y-8 pb-12">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-100">
-          Employee Management
-        </h1>
-        <p className="text-slate-400">Add, manage and assign tasks to your workforce.</p>
-      </div>
-
-      <Card className="border-blue-500/20 bg-blue-500/5">
-        <h2 className="mb-4 text-xl font-bold text-slate-100">Add New Employee</h2>
-        <AddEmployeeForm />
-      </Card>
-
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-slate-100">Active Employees</h2>
-          <span className="rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-slate-400 border border-slate-700">
-            {users?.length || 0} Total
-          </span>
+    <div className="space-y-6 animate-fade-up">
+      <div className="page-header flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-xl"
+            style={{ background: "var(--brand-dim)", color: "var(--brand)" }}
+          >
+            <Users size={22} />
+          </div>
+          <div>
+            <h1 className="page-title">Employee Management</h1>
+            <p className="page-subtitle">
+              {users.length} employee{users.length !== 1 ? "s" : ""} in your organization
+            </p>
+          </div>
         </div>
-        <EmployeeManagementClient users={users || []} />
       </div>
+
+      <EmployeeManagementClient users={users} />
     </div>
   );
 }
