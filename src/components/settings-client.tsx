@@ -59,43 +59,41 @@ function CompanyProfileForm({ settings }: { settings: CompanySettings | null }) 
       {/* Basic Info */}
       <div className="card">
         <h3
-          className="text-sm font-bold uppercase tracking-wide mb-4"
-          style={{ color: "var(--text-muted)", letterSpacing: "0.06em" }}
+          className="text-[11px] font-extrabold uppercase tracking-[0.12em] mb-5"
+          style={{ color: "var(--text-secondary)" }}
         >
           Basic Information
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="form-group sm:col-span-2">
             <label className="label">Company Name *</label>
-            <div className="relative">
+            <div className="input-icon-wrapper">
               <Building2
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "var(--text-muted)" }}
+                className="input-icon-left"
               />
               <input
                 name="company_name"
                 defaultValue={settings?.company_name ?? ""}
                 placeholder="Acme Corporation"
                 required
-                className="input pl-9"
+                className="input input-with-icon"
                 disabled={isPending}
               />
             </div>
           </div>
           <div className="form-group sm:col-span-2">
             <label className="label">Address</label>
-            <div className="relative">
+            <div className="input-icon-wrapper">
               <MapPin
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "var(--text-muted)" }}
+                className="input-icon-left"
               />
               <input
                 name="address"
                 defaultValue={settings?.address ?? ""}
                 placeholder="123 Business Street"
-                className="input pl-9"
+                className="input input-with-icon"
                 disabled={isPending}
               />
             </div>
@@ -146,60 +144,57 @@ function CompanyProfileForm({ settings }: { settings: CompanySettings | null }) 
       {/* Contact Info */}
       <div className="card">
         <h3
-          className="text-sm font-bold uppercase tracking-wide mb-4"
-          style={{ color: "var(--text-muted)", letterSpacing: "0.06em" }}
+          className="text-[11px] font-extrabold uppercase tracking-[0.12em] mb-5"
+          style={{ color: "var(--text-secondary)" }}
         >
           Contact Information
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="form-group">
             <label className="label">Phone</label>
-            <div className="relative">
+            <div className="input-icon-wrapper">
               <Phone
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "var(--text-muted)" }}
+                className="input-icon-left"
               />
               <input
                 name="phone"
                 defaultValue={settings?.phone ?? ""}
                 placeholder="+1 (555) 123-4567"
-                className="input pl-9"
+                className="input input-with-icon"
                 disabled={isPending}
               />
             </div>
           </div>
           <div className="form-group">
             <label className="label">Email</label>
-            <div className="relative">
+            <div className="input-icon-wrapper">
               <Mail
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "var(--text-muted)" }}
+                className="input-icon-left"
               />
               <input
                 type="email"
                 name="email"
                 defaultValue={settings?.email ?? ""}
                 placeholder="contact@company.com"
-                className="input pl-9"
+                className="input input-with-icon"
                 disabled={isPending}
               />
             </div>
           </div>
           <div className="form-group sm:col-span-2">
             <label className="label">Website</label>
-            <div className="relative">
+            <div className="input-icon-wrapper">
               <Globe
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "var(--text-muted)" }}
+                className="input-icon-left"
               />
               <input
                 name="website"
                 defaultValue={settings?.website ?? ""}
                 placeholder="https://www.company.com"
-                className="input pl-9"
+                className="input input-with-icon"
                 disabled={isPending}
               />
             </div>
@@ -210,8 +205,8 @@ function CompanyProfileForm({ settings }: { settings: CompanySettings | null }) 
       {/* Work Configuration */}
       <div className="card">
         <h3
-          className="text-sm font-bold uppercase tracking-wide mb-4"
-          style={{ color: "var(--text-muted)", letterSpacing: "0.06em" }}
+          className="text-[11px] font-extrabold uppercase tracking-[0.12em] mb-5"
+          style={{ color: "var(--text-secondary)" }}
         >
           Work Configuration
         </h3>
@@ -240,54 +235,51 @@ function CompanyProfileForm({ settings }: { settings: CompanySettings | null }) 
           </div>
           <div className="form-group">
             <label className="label">Currency Symbol *</label>
-            <div className="relative">
+            <div className="input-icon-wrapper">
               <DollarSign
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "var(--text-muted)" }}
+                className="input-icon-left"
               />
               <input
                 name="currency_symbol"
                 defaultValue={settings?.currency_symbol ?? "$"}
                 placeholder="$"
                 required
-                className="input pl-9"
+                className="input input-with-icon"
                 disabled={isPending}
               />
             </div>
           </div>
           <div className="form-group">
             <label className="label">Work Start Time *</label>
-            <div className="relative">
+            <div className="input-icon-wrapper">
               <Clock
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "var(--text-muted)" }}
+                className="input-icon-left"
               />
               <input
                 type="time"
                 name="work_start_time"
                 defaultValue={settings?.work_start_time ?? "09:00"}
                 required
-                className="input pl-9"
+                className="input input-with-icon"
                 disabled={isPending}
               />
             </div>
           </div>
           <div className="form-group">
             <label className="label">Work End Time *</label>
-            <div className="relative">
+            <div className="input-icon-wrapper">
               <Clock
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-                style={{ color: "var(--text-muted)" }}
+                className="input-icon-left"
               />
               <input
                 type="time"
                 name="work_end_time"
                 defaultValue={settings?.work_end_time ?? "18:00"}
                 required
-                className="input pl-9"
+                className="input input-with-icon"
                 disabled={isPending}
               />
             </div>
@@ -687,19 +679,18 @@ function DepartmentsTab({
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="input-icon-wrapper flex-1 max-w-sm">
           <Search
             size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2"
-            style={{ color: "var(--text-muted)" }}
+            className="input-icon-left"
           />
           <input
             type="text"
             placeholder="Search departments..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input pl-9"
+            className="input input-with-icon"
           />
         </div>
         <button
@@ -860,18 +851,17 @@ function DesignationsTab({
   return (
     <div className="space-y-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-sm">
+        <div className="input-icon-wrapper flex-1 max-w-sm">
           <Search
             size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2"
-            style={{ color: "var(--text-muted)" }}
+            className="input-icon-left"
           />
           <input
             type="text"
             placeholder="Search designations..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input pl-9"
+            className="input input-with-icon"
           />
         </div>
         <button
@@ -1015,7 +1005,7 @@ export function SettingsClient({
   const [activeTab, setActiveTab] = useState<Tab>("company");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       {/* Tab Bar */}
       <div
         className="flex gap-1 p-1 rounded-xl"

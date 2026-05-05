@@ -17,7 +17,7 @@ export default async function AdminHolidaysPage() {
     .order("date", { ascending: true });
 
   return (
-    <div className="space-y-6 animate-fade-up">
+    <div className="flex flex-col gap-10 animate-fade-up">
       <div className="page-header flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div

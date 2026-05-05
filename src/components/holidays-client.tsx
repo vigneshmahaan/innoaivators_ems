@@ -173,17 +173,17 @@ export function HolidaysClient({ holidays }: { holidays: Holiday[] }) {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-10">
       {/* Toolbar */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="input-icon-wrapper flex-1 min-w-[200px]">
+          <Search size={16} className="input-icon-left" />
           <input
             type="text"
             placeholder="Search holidays..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input pl-9"
+            className="input input-with-icon"
           />
         </div>
         <button onClick={() => setShowAddModal(true)} className="btn btn-primary shrink-0">

@@ -30,29 +30,37 @@ export function DesignationsClient({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-10">
       <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search designations..." className="input pl-9" />
+        <div className="input-icon-wrapper flex-1">
+          <Search size={16} className="input-icon-left" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search designations..." className="input input-with-icon" />
         </div>
       </div>
 
       <div className="card">
         <h3 className="font-bold mb-4" style={{ color: "var(--text-primary)" }}>Add Designation</h3>
-        <form action={handleCreate} className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <input name="title" placeholder="Title" required className="input" />
-          <select name="department_id" className="input">
-            <option value="">No Department</option>
-            {departments.map((d) => (
-              <option key={d.id} value={d.id}>{d.name}</option>
-            ))}
-          </select>
-          <input name="level" type="number" defaultValue={1} className="input" />
-          <button type="submit" className="btn btn-primary" disabled={isPending}>
-            {isPending ? <span className="spinner" /> : <Plus size={14} />}
-            Add
-          </button>
+        <form action={handleCreate} className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+          <div className="sm:col-span-4">
+            <input name="title" placeholder="Title" required className="input" />
+          </div>
+          <div className="sm:col-span-4">
+            <select name="department_id" className="input">
+              <option value="">No Department</option>
+              {departments.map((d) => (
+                <option key={d.id} value={d.id}>{d.name}</option>
+              ))}
+            </select>
+          </div>
+          <div className="sm:col-span-2">
+            <input name="level" type="number" defaultValue={1} className="input" placeholder="Level" />
+          </div>
+          <div className="sm:col-span-2">
+            <button type="submit" className="btn btn-primary w-full" disabled={isPending}>
+              {isPending ? <span className="spinner" /> : <Plus size={14} />}
+              Add
+            </button>
+          </div>
         </form>
       </div>
 

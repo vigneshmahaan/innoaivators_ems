@@ -34,17 +34,19 @@ export function DepartmentsClient({ departments }: { departments: Department[] }
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search departments..." className="input pl-9" />
+    <div className="space-y-10">
+      <div 
+        className="flex flex-col gap-6 sm:flex-row mb-4"
+      >
+        <div className="input-icon-wrapper flex-1">
+          <Search size={16} className="input-icon-left" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search departments..." className="input input-with-icon" />
         </div>
       </div>
 
       <div className="card">
         <h3 className="font-bold mb-4" style={{ color: "var(--text-primary)" }}>Add Department</h3>
-        <form action={handleCreate} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <form action={handleCreate} className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
           <input name="name" placeholder="Department Name" required className="input" />
           <input name="code" placeholder="Code (optional)" className="input" />
           <button type="submit" className="btn btn-primary" disabled={isPending}>

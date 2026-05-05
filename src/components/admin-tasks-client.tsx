@@ -71,9 +71,9 @@ export function AdminTasksClient({ tasks, categories }: { tasks: Task[]; categor
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-10">
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+      <div className="grid grid-cols-2 gap-6 sm:grid-cols-5">
         {[
           { label: "Total Tasks", value: counts.All, color: "var(--brand)" },
           { label: "Pending", value: counts.Pending, color: "var(--text-muted)" },
@@ -83,20 +83,21 @@ export function AdminTasksClient({ tasks, categories }: { tasks: Task[]; categor
         ].map((s) => (
           <div key={s.label} className="card text-center py-4">
             <div className="text-2xl font-black" style={{ color: s.color }}>{s.value}</div>
-            <div className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{s.label}</div>
+            <div className="text-xs mt-1.5" style={{ color: "var(--text-muted)" }}>{s.label}</div>
           </div>
         ))}
       </div>
 
-      {/* Search + Filter */}
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
-          <input type="text" placeholder="Search by task title or employee..." value={search} onChange={(e) => setSearch(e.target.value)} className="input pl-9" />
+      <div 
+        className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="input-icon-wrapper flex-1">
+          <Search size={16} className="input-icon-left" />
+          <input type="text" placeholder="Search by task title or employee..." value={search} onChange={(e) => setSearch(e.target.value)} className="input input-with-icon" />
         </div>
         <div className="flex flex-wrap gap-2">
           {(Object.keys(counts) as FilterStatus[]).map((s) => (
-            <button key={s} onClick={() => setFilter(s)} className={`btn btn-sm ${filter === s ? "btn-primary" : "btn-secondary"}`}>{s}</button>
+            <button key={s} onClick={() => setFilter(s)} className={`btn btn-sm ${filter === s ? "btn-primary" : "btn-secondary"}`} style={{ minWidth: "90px" }}>{s}</button>
           ))}
         </div>
       </div>
@@ -134,7 +135,7 @@ export function AdminTasksClient({ tasks, categories }: { tasks: Task[]; categor
                       <td>
                         <div className="max-w-[260px]">
                           <div className="font-semibold text-sm truncate" style={{ color: "var(--text-primary)" }}>{task.title}</div>
-                          {task.description && <div className="text-xs truncate mt-0.5" style={{ color: "var(--text-muted)" }}>{task.description}</div>}
+                          {task.description && <div className="text-xs truncate mt-1.5" style={{ color: "var(--text-muted)" }}>{task.description}</div>}
                           {task.category_name && <span className="badge text-[10px] mt-1" style={{ background: `${task.category_color}20`, color: task.category_color }}>{task.category_name}</span>}
                         </div>
                       </td>

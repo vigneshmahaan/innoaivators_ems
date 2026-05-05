@@ -35,17 +35,33 @@ export function AuditLogsClient({ logs }: { logs: AuditLog[] }) {
   };
 
   return (
-    <div className="space-y-5">
-      {/* Search */}
-      <div className="relative max-w-md">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
-        <input
-          type="text"
-          placeholder="Search by user, action, or entity..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="input pl-9"
-        />
+    <div className="space-y-10">
+      <div className="page-header flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-xl"
+            style={{ background: "var(--info-dim)", color: "var(--info)" }}
+          >
+            <Clock size={22} />
+          </div>
+          <div>
+            <h1 className="page-title">Audit Logs</h1>
+            <p className="page-subtitle">
+              {logs.length} activity log{logs.length !== 1 ? "s" : ""} recorded
+            </p>
+          </div>
+        </div>
+
+        <div className="input-icon-wrapper w-full sm:max-w-xs">
+          <Search size={16} className="input-icon-left" />
+          <input
+            type="text"
+            placeholder="Search activity..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="input input-with-icon"
+          />
+        </div>
       </div>
 
       {/* Table */}

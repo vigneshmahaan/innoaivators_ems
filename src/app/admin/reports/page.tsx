@@ -15,15 +15,17 @@ export default async function AdminReportsPage() {
   const winner = leaderboard?.[0];
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-10">
       <h1 className="text-3xl font-bold">Analytics & Performance Reports</h1>
-      <Card className="border-yellow-600/50 bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 text-slate-100">
-        <h2 className="mb-3 text-lg font-semibold flex items-center gap-2">
-          <span className="text-2xl">🏆</span> Star of the Month
-        </h2>
-        <p className="text-lg font-bold text-yellow-300">
-          {winner ? `${(winner.users as { name?: string })?.name ?? "Top performer"} (Score: ${winner.final_score})` : "No monthly data yet."}
-        </p>
+      <Card className="border-yellow-600/50 bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 text-slate-100 p-12">
+        <div className="relative z-10">
+          <h2 className="mb-3 text-lg font-semibold flex items-center gap-2">
+            <span className="text-2xl">🏆</span> Star of the Month
+          </h2>
+          <p className="text-lg font-bold text-yellow-300">
+            {winner ? `${(winner.users as { name?: string })?.name ?? "Top performer"} (Score: ${winner.final_score})` : "No monthly data yet."}
+          </p>
+        </div>
       </Card>
       <div>
         <h2 className="mb-4 text-lg font-semibold">Leaderboard</h2>

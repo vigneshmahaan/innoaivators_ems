@@ -24,7 +24,7 @@ export default async function AdminAnnouncementsPage() {
   ]);
 
   return (
-    <div className="space-y-6 animate-fade-up">
+    <div className="space-y-4 animate-fade-up">
       <div className="page-header flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div

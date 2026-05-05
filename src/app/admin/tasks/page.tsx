@@ -11,7 +11,7 @@ export default async function AdminTasksPage() {
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-10">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>

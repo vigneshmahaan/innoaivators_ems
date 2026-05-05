@@ -7,7 +7,7 @@ export default async function EmployeeDashboardPage() {
   const data = await getEmployeeDashboardData(user.id);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
           Welcome back, {user.name}

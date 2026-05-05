@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ClipboardList, KeyRound, UserPlus, Search, Building2,
   Mail, Phone, CheckCircle, XCircle, Eye, X, ChevronDown,
-  AlertTriangle, Briefcase, Calendar, User, FileText, History
+  AlertTriangle, Briefcase, Calendar, User, FileText, History,
+  Fingerprint
 } from "lucide-react";
 import { createEmployeeAction, resetPasswordAction, updateEmployeeStatusAction } from "@/app/actions/auth";
 import { AssignTaskModal } from "@/components/assign-task-modal";
@@ -24,101 +25,187 @@ function AddEmployeeModal({ onClose, departments }: { onClose: () => void; depar
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex justify-end">
+      {/* Ultra-premium Backdrop */}
       <motion.div
-        className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/40 backdrop-blur-md"
         onClick={onClose}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
       />
+      
+      {/* Slide-over Panel */}
       <motion.div
-        className="relative z-10 w-full max-w-2xl rounded-2xl"
-        style={{ background: "var(--bg-card)", border: "1px solid var(--border-default)" }}
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ type: "spring", duration: 0.3 }}
+        className="relative w-full max-w-3xl flex flex-col"
+        style={{ 
+          background: "linear-gradient(180deg, #0f172a 0%, #020617 100%)",
+          height: "100vh",
+          borderLeft: "1px solid rgba(255, 255, 255, 0.05)",
+          boxShadow: "-40px 0 80px -20px rgba(0, 0, 0, 1)",
+          position: "relative"
+        }}
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", damping: 32, stiffness: 220 }}
       >
-        <div className="flex items-center justify-between p-6" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ background: "var(--brand-dim)", color: "var(--brand)" }}>
-              <UserPlus size={18} />
-            </div>
-            <div>
-              <h2 className="font-bold" style={{ color: "var(--text-primary)" }}>Add New Employee</h2>
-              <p className="text-xs" style={{ color: "var(--text-muted)" }}>Create a new employee account</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="btn btn-icon btn-ghost" style={{ color: "var(--text-muted)" }}>
-            <X size={18} />
-          </button>
-        </div>
-
-        <form action={async (formData) => {
-          startTransition(async () => {
-            const result = await createEmployeeAction({}, formData);
-            if (result?.error) toast.error(result.error);
-            else { toast.success("Employee created successfully!"); onClose(); }
-          });
-        }} className="p-6 space-y-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="form-group">
-              <label className="label">Full Name *</label>
-              <input name="name" placeholder="John Doe" required className="input" disabled={isPending} />
-            </div>
-            <div className="form-group">
-              <label className="label">Employee ID *</label>
-              <input name="employee_id" placeholder="EMP-001" required className="input" disabled={isPending} />
-            </div>
-            <div className="form-group sm:col-span-2">
-              <label className="label">Email Address *</label>
-              <div className="relative">
-                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
-                <input type="email" name="email" placeholder="employee@company.com" required className="input pl-9" disabled={isPending} />
+        {/* Premium Header */}
+        <div className="relative px-10 py-10 shrink-0 overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+          <div className="flex items-center justify-between relative z-10">
+            <div className="flex items-center gap-6">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-[0_0_30px_-5px_rgba(99,102,241,0.3)]">
+                <UserPlus size={28} strokeWidth={1.5} />
+              </div>
+              <div>
+                <h2 className="text-3xl font-extrabold tracking-tight text-white">Onboard Talent</h2>
+                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-1 opacity-70">New Personnel Registration</p>
               </div>
             </div>
-            <div className="form-group">
-              <label className="label">Temporary Password *</label>
-              <input type="password" name="password" placeholder="Min 8 characters" minLength={8} required className="input" disabled={isPending} />
-            </div>
-            <div className="form-group">
-              <label className="label">Department *</label>
-              <div className="relative">
-                <select name="department" required className="input" disabled={isPending}>
-                  <option value="">Select department</option>
-                  {departments.map((d) => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
-                <ChevronDown size={13} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="label">Position / Job Title</label>
-              <div className="relative">
-                <Briefcase size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
-                <input name="position" placeholder="e.g. Software Engineer" className="input pl-9" disabled={isPending} />
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="label">Phone Number</label>
-              <div className="relative">
-                <Phone size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
-                <input name="phone" placeholder="+91 98765 43210" className="input pl-9" disabled={isPending} />
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-lg p-3 text-xs" style={{ background: "var(--info-dim)", color: "var(--info)", border: "1px solid rgba(6,182,212,0.2)" }}>
-            The employee will use this password for their first login and will be prompted to change it. Password must be at least 8 characters.
-          </div>
-
-          <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={onClose} className="btn btn-secondary" disabled={isPending}>Cancel</button>
-            <button type="submit" className="btn btn-primary" disabled={isPending}>
-              {isPending ? <><span className="spinner" /> Creating...</> : <><UserPlus size={15} /> Create Employee</>}
+            <button 
+              onClick={onClose} 
+              className="group h-10 w-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-all"
+            >
+              <X size={24} className="text-slate-600 group-hover:text-white transition-colors" />
             </button>
           </div>
-        </form>
+        </div>
+
+        {/* Premium Scrollable Content */}
+        <div className="flex-1 overflow-y-auto px-10 pb-10 custom-scrollbar">
+          <form id="add-employee-form" action={async (formData) => {
+            startTransition(async () => {
+              const result = await createEmployeeAction({}, formData);
+              if (result?.error) toast.error(result.error);
+              else { toast.success("Employee created successfully!"); onClose(); }
+            });
+          }} className="space-y-12">
+            
+            {/* CORE INFORMATION */}
+            <div className="space-y-8 animate-fade-in">
+              <div className="flex items-center gap-4">
+                <span className="text-[10px] font-black text-indigo-500/80 uppercase tracking-[0.4em] whitespace-nowrap">Identity & Contact</span>
+                <div className="h-[1px] flex-1 bg-gradient-to-r from-indigo-500/20 to-transparent" />
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="form-group">
+                  <label className="premium-label">Full Legal Name</label>
+                  <input name="name" placeholder="Johnathan Doe" required className="premium-input" disabled={isPending} />
+                </div>
+                <div className="form-group">
+                  <label className="premium-label">Professional Email</label>
+                  <div className="relative group">
+                    <Mail size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-indigo-400 transition-colors" />
+                    <input type="email" name="email" placeholder="john.doe@company.com" required className="premium-input premium-input-icon-left" disabled={isPending} />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="premium-label">Phone Number</label>
+                  <div className="relative group">
+                    <Phone size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-indigo-400 transition-colors" />
+                    <input name="phone" placeholder="+1 (555) 000-0000" className="premium-input premium-input-icon-left" disabled={isPending} />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="premium-label">Corporate ID</label>
+                  <div className="relative group">
+                    <Fingerprint size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-indigo-400 transition-colors" />
+                    <input name="employee_id" placeholder="EMP-XXXX" required className="premium-input premium-input-icon-left" disabled={isPending} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ORGANIZATIONAL PLACEMENT */}
+            <div className="space-y-8 animate-fade-in stagger-1">
+              <div className="flex items-center gap-4">
+                <span className="text-[10px] font-black text-emerald-500/80 uppercase tracking-[0.4em] whitespace-nowrap">Role & Placement</span>
+                <div className="h-[1px] flex-1 bg-gradient-to-r from-emerald-500/20 to-transparent" />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="form-group">
+                  <label className="premium-label">Department Unit</label>
+                  <div className="relative group">
+                    <Building2 size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-emerald-400 transition-colors" />
+                    <select name="department" required className="premium-input premium-input-icon-left appearance-none bg-transparent cursor-pointer pr-12" disabled={isPending}>
+                      <option value="" className="bg-[#0f172a]">Select Placement</option>
+                      {departments.map((d) => (
+                        <option key={d} value={d} className="bg-[#0f172a]">{d}</option>
+                      ))}
+                    </select>
+                    <ChevronDown size={18} className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-emerald-400 transition-colors" />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="premium-label">Designated Title</label>
+                  <div className="relative group">
+                    <Briefcase size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-emerald-400 transition-colors" />
+                    <input name="position" placeholder="e.g. Lead Developer" className="premium-input premium-input-icon-left" disabled={isPending} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ACCESS & SECURITY */}
+            <div className="space-y-8 animate-fade-in stagger-2">
+              <div className="flex items-center gap-4">
+                <span className="text-[10px] font-black text-amber-500/80 uppercase tracking-[0.4em] whitespace-nowrap">Security Protocol</span>
+                <div className="h-[1px] flex-1 bg-gradient-to-r from-amber-500/20 to-transparent" />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-start">
+                <div className="form-group">
+                  <label className="premium-label">System Access Password</label>
+                  <div className="relative group">
+                    <KeyRound size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-amber-400 transition-colors" />
+                    <input type="password" name="password" placeholder="••••••••" minLength={8} required className="premium-input premium-input-icon-left" disabled={isPending} />
+                  </div>
+                </div>
+                <div className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-5 flex gap-4">
+                  <AlertTriangle size={20} className="text-amber-500 shrink-0" />
+                  <p className="text-[11px] text-amber-500/70 leading-relaxed font-bold uppercase tracking-wider">
+                    Policy: Mandatory password reset required upon initial authentication.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        {/* Premium Sticky Footer */}
+        <div className="px-10 py-10 shrink-0 bg-black/40 backdrop-blur-2xl border-t border-white/5">
+          <div className="flex gap-6">
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="flex-1 px-8 h-14 rounded-2xl border border-white/10 text-slate-400 font-bold text-sm hover:text-white hover:bg-white/5 transition-all"
+              disabled={isPending}
+            >
+              Cancel
+            </button>
+            <button 
+              form="add-employee-form" 
+              type="submit" 
+              className="flex-[2] px-8 h-14 rounded-2xl bg-indigo-600 text-white font-bold text-sm shadow-[0_15px_30px_-10px_rgba(79,142,247,0.4)] hover:bg-indigo-500 hover:shadow-[0_20px_40px_-10px_rgba(79,142,247,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:translate-y-0 disabled:shadow-none"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <>
+                  <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Processing Personnel...</span>
+                </>
+              ) : (
+                <>
+                  <UserPlus size={20} />
+                  <span>Complete Onboarding</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
       </motion.div>
     </div>
   );
@@ -204,36 +291,40 @@ export function EmployeeManagementClient({ users }: { users: UserProfile[] }) {
   }
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 flex-wrap gap-2">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
-            <input type="text" placeholder="Search employees..." value={search} onChange={(e) => setSearch(e.target.value)} className="input pl-9" />
+    <div className="flex flex-col gap-10">
+      <div 
+        className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "0.75rem", alignItems: "center" }}>
+          <div className="input-icon-wrapper flex-1 min-w-[200px]">
+            <Search size={16} className="input-icon-left" />
+            <input type="text" placeholder="Search employees..." value={search} onChange={(e) => setSearch(e.target.value)} className="input input-with-icon" />
           </div>
           <div className="relative">
-            <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="input pr-8" style={{ minWidth: 140 }}>
+            <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="input" style={{ minWidth: 160, paddingRight: "2.75rem" }}>
               {departments.map((d) => <option key={d} value={d}>{d}</option>)}
             </select>
-            <ChevronDown size={13} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
+            <ChevronDown size={14} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
           </div>
           <div className="relative">
-            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="input pr-8">
+            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="input" style={{ paddingRight: "2.75rem" }}>
               <option value="All">All Status</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
-            <ChevronDown size={13} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
+            <ChevronDown size={14} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
           </div>
         </div>
         <button onClick={() => setShowAddModal(true)} className="btn btn-primary shrink-0">
-          <UserPlus size={16} /> Add Employee
+          <UserPlus size={18} /> Add Employee
         </button>
       </div>
 
-      <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-        Showing {filtered.length} of {users.length} employees
-      </p>
+      <div className="mb-2">
+        <p className="text-xs font-medium" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
+          Showing <span style={{ color: "var(--text-primary)" }}>{filtered.length}</span> of <span style={{ color: "var(--text-primary)" }}>{users.length}</span> employees
+        </p>
+      </div>
 
       {filtered.length === 0 ? (
         <div className="card empty-state">
@@ -264,8 +355,8 @@ export function EmployeeManagementClient({ users }: { users: UserProfile[] }) {
                       </div>
                       <div>
                         <div className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>{u.name}</div>
-                        <div className="text-xs font-mono" style={{ color: "var(--text-muted)" }}>{u.employee_id}</div>
-                        {u.position && <div className="text-xs" style={{ color: "var(--text-secondary)" }}>{u.position}</div>}
+                        <div className="text-xs font-mono mt-1" style={{ color: "var(--text-muted)" }}>{u.employee_id}</div>
+                        {u.position && <div className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>{u.position}</div>}
                       </div>
                     </div>
                   </td>
@@ -280,9 +371,9 @@ export function EmployeeManagementClient({ users }: { users: UserProfile[] }) {
                     )}
                   </td>
                   <td>
-                    <div className="space-y-0.5 text-xs" style={{ color: "var(--text-secondary)" }}>
-                      {u.email && <div className="flex items-center gap-1"><Mail size={11} style={{ color: "var(--text-muted)" }} />{u.email}</div>}
-                      {u.phone && <div className="flex items-center gap-1"><Phone size={11} style={{ color: "var(--text-muted)" }} />{u.phone}</div>}
+                    <div className="space-y-1.5 text-xs" style={{ color: "var(--text-secondary)" }}>
+                      {u.email && <div className="flex items-center gap-1.5"><Mail size={12} style={{ color: "var(--text-muted)" }} />{u.email}</div>}
+                      {u.phone && <div className="flex items-center gap-1.5"><Phone size={12} style={{ color: "var(--text-muted)" }} />{u.phone}</div>}
                     </div>
                   </td>
                   <td>

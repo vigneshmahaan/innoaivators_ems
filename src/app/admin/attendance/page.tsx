@@ -22,13 +22,25 @@ export default async function AdminAttendancePage({
   const { data } = await query;
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Attendance Monitoring</h1>
-      <Card>
-        <form className="flex gap-2">
-          <Input type="date" name="date" defaultValue={selectedDate} />
-        </form>
+    <div className="flex flex-col gap-10">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-black tracking-tight" style={{ color: "var(--text-primary)" }}>Attendance Monitoring</h1>
+        <div className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          Admin Panel / Attendance
+        </div>
+      </div>
+
+      <Card className="p-6">
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-bold" style={{ color: "var(--text-secondary)" }}>Filter by Date:</span>
+          <form className="flex gap-2">
+            <div className="w-full" style={{ maxWidth: '220px' }}>
+              <Input type="date" name="date" defaultValue={selectedDate} className="input" />
+            </div>
+          </form>
+        </div>
       </Card>
+
       <ModernTable>
         <ModernTableHeader>
           <tr>
@@ -40,15 +52,23 @@ export default async function AdminAttendancePage({
           </tr>
         </ModernTableHeader>
         <ModernTableBody>
-          {(data ?? []).map((row, idx) => (
-            <ModernTableRow key={row.id} index={idx}>
-              <ModernTableCell>{row.date}</ModernTableCell>
-              <ModernTableCell>{(row.users as { name?: string })?.name ?? "-"}</ModernTableCell>
-              <ModernTableCell>{row.login_time ?? "-"}</ModernTableCell>
-              <ModernTableCell>{row.logout_time ?? "-"}</ModernTableCell>
-              <ModernTableCell>{row.total_hours ?? 0}</ModernTableCell>
+          {data && data.length > 0 ? (
+            data.map((row, idx) => (
+              <ModernTableRow key={row.id} index={idx}>
+                <ModernTableCell>{row.date}</ModernTableCell>
+                <ModernTableCell>{(row.users as { name?: string })?.name ?? "-"}</ModernTableCell>
+                <ModernTableCell>{row.login_time ?? "-"}</ModernTableCell>
+                <ModernTableCell>{row.logout_time ?? "-"}</ModernTableCell>
+                <ModernTableCell>{row.total_hours ?? 0}</ModernTableCell>
+              </ModernTableRow>
+            ))
+          ) : (
+            <ModernTableRow index={0}>
+              <ModernTableCell className="text-center py-12" colSpan={5}>
+                <div className="text-slate-500 italic">No attendance records found for this date.</div>
+              </ModernTableCell>
             </ModernTableRow>
-          ))}
+          )}
         </ModernTableBody>
       </ModernTable>
     </div>

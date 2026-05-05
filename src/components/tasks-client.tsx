@@ -126,9 +126,9 @@ export function TasksClient({ tasks, categories }: { tasks: Task[]; categories: 
                 className="card group"
                 style={{ borderColor: isOverdue ? "rgba(239,68,68,0.2)" : undefined }}
               >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
                   <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
                       {task.category_name && (
                         <span className="badge" style={{ background: `${task.category_color}20`, color: task.category_color, borderColor: `${task.category_color}40` }}>
                           {task.category_name}
@@ -166,14 +166,14 @@ export function TasksClient({ tasks, categories }: { tasks: Task[]; categories: 
 
                     <div className="mt-2 flex flex-wrap gap-4">
                       <div className="flex items-center gap-1.5 text-xs" style={{ color: "var(--text-muted)" }}>
-                        <User size={12} /> Assigned by {adminName}
+                        <User size={14} /> Assigned by {adminName}
                       </div>
                       <div className="flex items-center gap-1.5 text-xs" style={{ color: isOverdue ? "var(--danger)" : "var(--text-muted)" }}>
-                        <Calendar size={12} /> {format(new Date(task.deadline), "MMM dd, yyyy")}
+                        <Calendar size={14} /> {format(new Date(task.deadline), "MMM dd, yyyy")}
                       </div>
                       {task.hours_estimated ? (
                         <div className="flex items-center gap-1.5 text-xs" style={{ color: "var(--text-muted)" }}>
-                          <Clock size={12} /> Est: {task.hours_estimated}h
+                          <Clock size={14} /> Est: {task.hours_estimated}h
                           {task.hours_spent ? ` / Spent: ${task.hours_spent}h` : ""}
                         </div>
                       ) : null}

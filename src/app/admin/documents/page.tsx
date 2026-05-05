@@ -7,7 +7,7 @@ export default async function AdminDocumentsPage() {
   const employees = await getAdminEmployeeList();
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-10">
       <div>
         <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
           Documents

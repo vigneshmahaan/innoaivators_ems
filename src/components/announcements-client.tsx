@@ -325,7 +325,7 @@ export function AnnouncementsClient({
   const handleClose = useCallback(() => setShowAddModal(false), []);
 
   return (
-    <div className="ann-page">
+    <div className="ann-page flex flex-col gap-10">
       {/* ── Toolbar ── */}
       <div className="ann-toolbar">
         <div className="ann-search-wrap">

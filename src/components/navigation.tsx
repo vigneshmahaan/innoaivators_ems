@@ -193,7 +193,7 @@ export function Sidebar({
       {/* Footer: User Info + Logout */}
       <div className="sidebar-footer">
         <div
-          className="mb-3 flex items-center gap-3 rounded-xl p-2.5"
+          className="mb-4 flex items-center gap-4 rounded-xl p-3.5"
           style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)" }}
         >
           <div
@@ -203,10 +203,10 @@ export function Sidebar({
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+            <div className="truncate text-sm font-bold" style={{ color: "var(--text-primary)" }}>
               {user.name}
             </div>
-            <div className="truncate text-xs" style={{ color: "var(--text-muted)" }}>
+            <div className="truncate text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
               {user.employee_id} · {user.role}
             </div>
           </div>

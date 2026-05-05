@@ -25,9 +25,8 @@ interface ModernTableRowProps {
   index?: number;
 }
 
-interface ModernTableCellProps {
+interface ModernTableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
   children: React.ReactNode;
-  className?: string;
   header?: boolean;
 }
 
@@ -36,8 +35,8 @@ export function ModernTable({
   className,
 }: ModernTableProps) {
   return (
-    <div className={cn("overflow-x-auto rounded-lg border border-slate-700 shadow-lg", className)}>
-      <table className="w-full table-auto text-sm">
+    <div className={cn("table-wrapper", className)}>
+      <table className="table">
         {children}
       </table>
     </div>
@@ -50,9 +49,9 @@ export function ModernTableHeader({
 }: ModernTableHeaderProps) {
   return (
     <thead className={cn(
-      "bg-slate-900 border-b border-slate-700",
+      "border-b border-[var(--border-subtle)]",
       className
-    )}>
+    )} style={{ background: "var(--bg-elevated)" }}>
       {children}
     </thead>
   );
@@ -63,7 +62,7 @@ export function ModernTableBody({
   className,
 }: ModernTableBodyProps) {
   return (
-    <tbody className={cn("divide-y divide-slate-700", className)}>
+    <tbody className={cn("divide-y divide-[var(--border-subtle)]", className)}>
       {children}
     </tbody>
   );
@@ -81,8 +80,8 @@ export function ModernTableRow({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       className={cn(
-        "bg-slate-900/50 transition-all duration-200",
-        hover && "hover:bg-slate-800/50",
+        "bg-[var(--bg-card)] transition-all duration-200",
+        hover && "hover:bg-[var(--bg-card-hover)]",
         className
       )}
     >
@@ -95,14 +94,16 @@ export function ModernTableCell({
   children,
   className,
   header = false,
+  ...props
 }: ModernTableCellProps) {
   if (header) {
     return (
       <th
         className={cn(
-          "px-6 py-4 text-left font-semibold text-slate-100 whitespace-nowrap",
+          "px-6 py-5 text-left font-bold text-[var(--text-primary)] uppercase tracking-wider text-[11px]",
           className
         )}
+        {...(props as React.ThHTMLAttributes<HTMLTableCellElement>)}
       >
         {children}
       </th>
@@ -112,9 +113,10 @@ export function ModernTableCell({
   return (
     <td
       className={cn(
-        "px-6 py-4 text-slate-300 whitespace-nowrap",
+        "px-6 py-4 text-[var(--text-secondary)] text-sm",
         className
       )}
+      {...props}
     >
       {children}
     </td>

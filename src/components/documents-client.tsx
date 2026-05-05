@@ -35,16 +35,16 @@ export function DocumentsClient({ employees }: { employees: UserProfile[] }) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
+    <div className="space-y-10">
+      <div className="flex flex-col gap-6 sm:flex-row">
+        <div className="input-icon-wrapper flex-1">
+          <Search size={16} className="input-icon-left" />
           <input
             type="text"
             placeholder="Search employees..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input pl-9"
+            className="input input-with-icon"
           />
         </div>
       </div>

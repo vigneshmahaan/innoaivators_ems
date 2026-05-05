@@ -138,11 +138,17 @@ export async function getEmployeeDashboardData(userId: string): Promise<Employee
 
 export async function getEmployeeLeaveData(userId: string): Promise<LeaveRequest[]> {
   const supabase = await createClient();
-  const { data: leaves } = await supabase
+  const { data: leaves, error } = await supabase
     .from("leave_requests")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching employee leave data:", error);
+    return [];
+  }
+
   return (leaves ?? []) as LeaveRequest[];
 }
 
@@ -282,10 +288,16 @@ export async function getAdminTasksData(): Promise<Task[]> {
 
 export async function getAdminLeaveRequests(): Promise<LeaveRequest[]> {
   const supabase = await createClient();
-  const { data: leaves } = await supabase
+  const { data: leaves, error } = await supabase
     .from("leave_requests")
-    .select("*, users(name,employee_id,department)")
+    .select("*, users:user_id(name,employee_id,department)")
     .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching admin leave requests:", error);
+    return [];
+  }
+
   return (leaves ?? []) as LeaveRequest[];
 }
 

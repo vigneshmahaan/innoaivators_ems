@@ -6,7 +6,7 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
   return (
     <div
       className={cn(
-        "bg-slate-900 rounded-xl border border-slate-800 p-6 shadow-xl transition-all duration-300 hover:border-slate-700",
+        "card",
         className
       )}
       {...props}
@@ -69,9 +69,8 @@ export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       className={cn(
-        "w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 transition-all duration-200",
-        "focus:border-blue-500 focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20",
-        "disabled:cursor-not-allowed disabled:opacity-50"
+        "input",
+        props.className
       )}
       {...props}
     />
@@ -97,14 +96,15 @@ export function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select
       className={cn(
-        "w-full rounded-lg border border-slate-600 bg-slate-900/50 px-4 py-2.5 text-sm text-slate-100 transition-all duration-200",
-        "focus:border-blue-500 focus:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20",
-        "disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer",
-        "[background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E\")]",
-        "[background-position:right_1rem_center]",
-        "[background-repeat:no-repeat]",
-        "[padding-right:2.5rem]"
+        "input appearance-none cursor-pointer",
+        props.className
       )}
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+        backgroundPosition: "right 1rem center",
+        backgroundRepeat: "no-repeat",
+        paddingRight: "2.5rem"
+      }}
       {...props}
     />
   );

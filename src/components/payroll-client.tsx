@@ -99,9 +99,9 @@ export function PayrollClient({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-10">
       {/* Tabs */}
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <button
           onClick={() => setActiveTab("components")}
           className={`btn btn-sm ${activeTab === "components" ? "btn-primary" : "btn-secondary"}`}
@@ -119,7 +119,7 @@ export function PayrollClient({
       </div>
 
       {activeTab === "components" && (
-        <motion.div className="space-y-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <motion.div className="space-y-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div className="card">
             <h3 className="font-bold mb-4" style={{ color: "var(--text-primary)" }}>
               Add Salary Component
@@ -165,8 +165,8 @@ export function PayrollClient({
                   ESI
                 </label>
               </div>
-              <div className="sm:col-span-2">
-                <button type="submit" className="btn btn-primary" disabled={isPending}>
+              <div className="sm:col-span-2 pt-2">
+                <button type="submit" className="btn btn-primary w-full sm:w-auto" disabled={isPending}>
                   {isPending ? <span className="spinner" /> : <DollarSign size={14} />}
                   Add Component
                 </button>
@@ -210,7 +210,7 @@ export function PayrollClient({
       )}
 
       {activeTab === "process" && (
-        <motion.div className="space-y-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <motion.div className="space-y-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div className="card">
             <h3 className="font-bold mb-4" style={{ color: "var(--text-primary)" }}>
               Process Payroll
@@ -297,7 +297,7 @@ export function PayrollClient({
                   <textarea name="notes" className="input" rows={2} />
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                   <button type="submit" className="btn btn-primary" disabled={isPending}>
                     {isPending ? <span className="spinner" /> : <CheckCircle size={14} />}
                     Process Payroll
