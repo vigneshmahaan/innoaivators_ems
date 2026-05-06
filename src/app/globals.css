@@ -1,8 +1,26 @@
 @import "tailwindcss";
 
-@layer components {
+@theme {
+  --color-brand: #4f8ef7;
+  --color-brand-hover: #6ea3fa;
+  --color-brand-dim: rgba(79, 142, 247, 0.12);
+  --color-brand-glow: rgba(79, 142, 247, 0.15);
+  
+  --color-bg-base: #060912;
+  --color-bg-surface: #0d1117;
+  --color-bg-card: #111827;
+  --color-bg-card-hover: #161f2e;
+  --color-bg-elevated: #1a2332;
+  
+  --color-text-primary: #f0f4ff;
+  --color-text-secondary: #8b9cc4;
+  --color-text-muted: #7a89ad;
+  
+  --color-border-subtle: rgba(255, 255, 255, 0.05);
+  --color-border-default: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.12);
+}
 
-/* ─── Design Tokens ───────────────────────────────────────── */
 :root {
   --bg-base: #060912;
   --bg-surface: #0d1117;
@@ -46,28 +64,31 @@
   --nav-height: 64px;
 }
 
-/* ─── Base Reset ──────────────────────────────────────────── */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
-body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background-color: var(--bg-base);
-  color: var(--text-primary);
-  min-height: 100vh;
-  line-height: 1.7;
-}
 
 /* ─── Scrollbar ───────────────────────────────────────────── */
 ::-webkit-scrollbar {
@@ -117,7 +138,7 @@ code, kbd, pre {
   transition: margin-left 0.3s ease;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .main-content {
     margin-left: 0;
   }
@@ -180,6 +201,8 @@ code, kbd, pre {
   border-radius: 16px;
   padding: 1.75rem;
 }
+
+
 
 /* ─── Stat Card ───────────────────────────────────────────── */
 .stat-card {
@@ -576,7 +599,7 @@ select.input,
   transition: transform 0.3s ease;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .sidebar {
     transform: translateX(-100%);
   }
@@ -809,7 +832,7 @@ select.input,
   backdrop-filter: blur(4px);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .sidebar-overlay.visible {
     display: block;
   }
@@ -1860,4 +1883,4 @@ select:-webkit-autofill {
   text-align: center;
 }
 
-} /* end layer components */
+

@@ -39,10 +39,15 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
             style={{ borderLeft: `4px solid ${s.color}` }}
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ background: `${s.color}15`, color: s.color }}>
+              <div 
+                className="flex h-9 w-9 items-center justify-center rounded-xl" 
+                style={{ background: `${s.color}15`, color: s.color }}
+              >
                 {s.icon}
               </div>
-              <span className="text-xs font-semibold" style={{ color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.label}</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
+                {s.label}
+              </span>
             </div>
             <div className="text-3xl font-black" style={{ color: s.color }}>{s.value}</div>
           </motion.div>
@@ -59,13 +64,17 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
             style={{ borderLeft: `4px solid ${s.color}` }}
           >
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold" style={{ color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{s.label}</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
+                {s.label}
+              </span>
               <span className="text-xl font-black" style={{ color: s.color }}>{s.value}</span>
             </div>
-            {s.href !== "#" && (
-              <Link href={s.href} className="text-xs font-bold flex items-center gap-1" style={{ color: "var(--brand)" }}>
+            {s.href !== "#" ? (
+              <Link href={s.href} className="text-xs font-bold flex items-center gap-1 text-brand hover:underline">
                 View all <ArrowRight size={12} />
               </Link>
+            ) : (
+              <span className="text-[10px] font-medium text-text-placeholder italic">Coming soon</span>
             )}
           </motion.div>
         ))}
@@ -75,27 +84,30 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
         {/* Top Performers */}
         <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
           <div className="flex items-center gap-2 mb-6">
-            <TrendingUp size={20} style={{ color: "var(--success)" }} />
-            <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>Top Performers</h3>
+            <TrendingUp size={20} className="text-success" />
+            <h3 className="text-lg font-bold text-text-primary">Top Performers</h3>
           </div>
           {data.topPerformers.length === 0 ? (
-            <p className="text-sm" style={{ color: "var(--text-muted)" }}>No performance data yet.</p>
+            <div className="py-12 flex flex-col items-center justify-center text-center opacity-30">
+              <BarChart3 size={48} className="mb-4" />
+              <p className="text-sm">No performance data yet.</p>
+            </div>
           ) : (
             <div className="space-y-4">
               {data.topPerformers.map((p, i) => (
-                <div key={i} className="flex items-center gap-4 p-3 rounded-xl" style={{ background: "var(--bg-elevated)" }}>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold" style={{ background: "var(--brand-dim)", color: "var(--brand)" }}>
+                <div key={i} className="flex items-center gap-4 p-3.5 rounded-2xl bg-bg-elevated/50 hover:bg-bg-elevated transition-colors border border-border-subtle">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-black bg-brand/10 text-brand">
                     {i + 1}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold truncate" style={{ color: "var(--text-primary)" }}>
+                    <div className="text-sm font-bold truncate text-text-primary">
                       {p.users?.name ?? "Unknown"}
                     </div>
-                    <div className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    <div className="text-[11px] text-text-muted mt-0.5">
                       {p.tasks_completed} tasks · {p.attendance_percentage}% attendance
                     </div>
                   </div>
-                  <div className="text-sm font-black" style={{ color: "var(--success)" }}>
+                  <div className="text-sm font-black text-success">
                     {p.final_score.toFixed(1)}
                   </div>
                 </div>
@@ -107,27 +119,30 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
         {/* Recent Logs */}
         <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
           <div className="flex items-center gap-2 mb-6">
-            <ClipboardList size={20} style={{ color: "var(--info)" }} />
-            <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>Recent Daily Logs</h3>
+            <ClipboardList size={20} className="text-info" />
+            <h3 className="text-lg font-bold text-text-primary">Recent Daily Logs</h3>
           </div>
           {data.recentLogs.length === 0 ? (
-            <p className="text-sm" style={{ color: "var(--text-muted)" }}>No logs yet.</p>
+            <div className="py-12 flex flex-col items-center justify-center text-center opacity-30">
+              <ClipboardList size={48} className="mb-4" />
+              <p className="text-sm">No logs recorded yet.</p>
+            </div>
           ) : (
             <div className="space-y-3">
               {data.recentLogs.map((log, i) => (
-                <div key={i} className="flex items-center gap-4 p-3 rounded-xl" style={{ background: "var(--bg-elevated)" }}>
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold" style={{ background: "var(--brand-dim)", color: "var(--brand)" }}>
+                <div key={i} className="flex items-center gap-4 p-3.5 rounded-2xl bg-bg-elevated/50 hover:bg-bg-elevated transition-colors border border-border-subtle">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold bg-brand/10 text-brand">
                     {log.users?.name?.charAt(0) ?? "?"}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold truncate" style={{ color: "var(--text-primary)" }}>
+                    <div className="text-sm font-bold truncate text-text-primary">
                       {log.task_title}
                     </div>
-                    <div className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    <div className="text-[11px] text-text-muted mt-0.5">
                       {log.users?.name ?? "Unknown"} · {log.hours_spent}h · {format(new Date(log.date), "MMM dd")}
                     </div>
                   </div>
-                  <span className={`badge ${log.status === "Completed" ? "badge-success" : "badge-info"} text-[10px]`}>
+                  <span className={`badge ${log.status === "Completed" ? "badge-success" : "badge-info"} text-[9px]`}>
                     {log.status}
                   </span>
                 </div>
@@ -141,15 +156,15 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
       <motion.div className="card" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <Shield size={20} style={{ color: "var(--warning)" }} />
-            <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>Recent Audit Logs</h3>
+            <Shield size={20} className="text-warning" />
+            <h3 className="text-lg font-bold text-text-primary">Recent Audit Logs</h3>
           </div>
-          <Link href="/admin/audit-logs" className="text-xs font-bold flex items-center gap-1" style={{ color: "var(--brand)" }}>
+          <Link href="/admin/audit-logs" className="text-xs font-bold flex items-center gap-1 text-brand hover:underline">
             View all <ArrowRight size={12} />
           </Link>
         </div>
         {data.recentAuditLogs.length === 0 ? (
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>No audit logs yet.</p>
+          <p className="text-sm text-text-muted py-8 text-center">No audit logs yet.</p>
         ) : (
           <div className="table-wrapper">
             <table className="table">
@@ -164,12 +179,12 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
               <tbody>
                 {data.recentAuditLogs.map((log) => (
                   <tr key={log.id}>
-                    <td className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    <td className="text-xs text-text-muted">
                       {format(new Date(log.created_at), "MMM dd, HH:mm")}
                     </td>
-                    <td className="text-sm font-medium">{log.user_name || "System"}</td>
-                    <td><span className="badge badge-info text-[10px]">{log.action}</span></td>
-                    <td className="text-xs" style={{ color: "var(--text-muted)" }}>
+                    <td className="text-sm font-bold text-text-secondary">{log.user_name || "System"}</td>
+                    <td><span className="badge badge-info text-[9px] uppercase">{log.action}</span></td>
+                    <td className="text-[11px] text-text-muted">
                       {log.entity_type} {log.entity_id ? `· ${log.entity_id.slice(0, 8)}` : ""}
                     </td>
                   </tr>

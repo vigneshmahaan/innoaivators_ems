@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/navigation";
+import { RealTimeClock } from "@/components/real-time-clock";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await requireRole("admin");
@@ -28,6 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         pendingLeaves={pendingLeaves ?? 0}
         pendingTasks={pendingTasks ?? 0}
       />
+      <RealTimeClock />
       <main className="main-content">
         <div className="content-area">{children}</div>
       </main>

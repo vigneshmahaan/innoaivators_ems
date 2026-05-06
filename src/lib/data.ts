@@ -22,6 +22,14 @@ import type {
 export async function getEmployeeDashboardData(userId: string): Promise<EmployeeDashboardData> {
   const supabase = await createClient();
   const today = format(new Date(), "yyyy-MM-dd");
+  const currentYear = new Date().getFullYear();
+
+  // Fetch user profile first to get department
+  const { data: profile } = await supabase
+    .from("users")
+    .select("department")
+    .eq("id", userId)
+    .maybeSingle();
 
   const [
     { data: attendance },
@@ -73,7 +81,7 @@ export async function getEmployeeDashboardData(userId: string): Promise<Employee
       .from("announcements")
       .select("*")
       .eq("status", "active")
-      .or(`type.eq.company,and(type.eq.department, department_ids.cs.{${userId}})`)
+      .or(`type.eq.company,and(type.eq.department, department_ids.cs.{${profile?.department || "none"}})`)
       .order("pinned", { ascending: false })
       .order("published_at", { ascending: false })
       .limit(5),
@@ -81,7 +89,7 @@ export async function getEmployeeDashboardData(userId: string): Promise<Employee
       .from("leave_balances")
       .select("*")
       .eq("user_id", userId)
-      .eq("year", new Date().getFullYear()),
+      .eq("year", currentYear),
   ]);
 
   const totalHours = (attendance ?? []).reduce((acc, item) => acc + (item.total_hours ?? 0), 0);

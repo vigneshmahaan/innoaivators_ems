@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import { getAdminEmployeeList } from "@/lib/data";
 import { EmployeeManagementClient } from "@/components/employee-management-client";
+import { getDepartments } from "@/services/employee-service";
 import { Users } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -8,7 +9,10 @@ export const metadata: Metadata = { title: "Employees — Admin" };
 
 export default async function AdminEmployeesPage() {
   await requireRole("admin");
-  const users = await getAdminEmployeeList();
+  const [users, departments] = await Promise.all([
+    getAdminEmployeeList(),
+    getDepartments()
+  ]);
 
   return (
     <div className="space-y-6 animate-fade-up">
@@ -29,7 +33,7 @@ export default async function AdminEmployeesPage() {
         </div>
       </div>
 
-      <EmployeeManagementClient users={users} />
+      <EmployeeManagementClient users={users} departments={departments} />
     </div>
   );
 }

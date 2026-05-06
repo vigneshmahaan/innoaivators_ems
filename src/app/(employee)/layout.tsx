@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/navigation";
+import { RealTimeClock } from "@/components/real-time-clock";
 
 export default async function EmployeeLayout({ children }: { children: React.ReactNode }) {
   const user = await requireRole("employee");
@@ -17,6 +18,7 @@ export default async function EmployeeLayout({ children }: { children: React.Rea
   return (
     <div className="page-wrapper">
       <Sidebar user={user} notifications={notifications ?? []} />
+      <RealTimeClock />
       <main className="main-content">
         <div className="content-area">{children}</div>
       </main>

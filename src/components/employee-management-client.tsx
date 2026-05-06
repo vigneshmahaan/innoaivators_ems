@@ -14,14 +14,9 @@ import { getOnboardingItems, getEmploymentHistory } from "@/services/employee-se
 import { toast } from "sonner";
 import Link from "next/link";
 import { format } from "date-fns";
-import type { UserProfile } from "@/lib/types";
+import type { UserProfile, Department } from "@/lib/types";
 
-const DEPARTMENTS = [
-  "HR", "Finance", "IT", "Sales", "Marketing",
-  "Operations", "Customer Service", "Legal", "Product", "Design",
-];
-
-function AddEmployeeModal({ onClose, departments }: { onClose: () => void; departments: string[] }) {
+function AddEmployeeModal({ onClose, departments }: { onClose: () => void; departments: Department[] }) {
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -133,7 +128,7 @@ function AddEmployeeModal({ onClose, departments }: { onClose: () => void; depar
                     <select name="department" required className="premium-input premium-input-icon-left appearance-none bg-transparent cursor-pointer pr-12" disabled={isPending}>
                       <option value="" className="bg-[#0f172a]">Select Placement</option>
                       {departments.map((d) => (
-                        <option key={d} value={d} className="bg-[#0f172a]">{d}</option>
+                        <option key={d.id} value={d.id} className="bg-[#0f172a]">{d.name}</option>
                       ))}
                     </select>
                     <ChevronDown size={18} className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-emerald-400 transition-colors" />
@@ -259,7 +254,13 @@ function ResetPasswordModal({ employee, onClose }: { employee: UserProfile; onCl
   );
 }
 
-export function EmployeeManagementClient({ users }: { users: UserProfile[] }) {
+export function EmployeeManagementClient({ 
+  users, 
+  departments 
+}: { 
+  users: UserProfile[];
+  departments: Department[];
+}) {
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -267,8 +268,6 @@ export function EmployeeManagementClient({ users }: { users: UserProfile[] }) {
   const [resetEmployee, setResetEmployee] = useState<UserProfile | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [isPending, startTransition] = useTransition();
-
-  const departments = ["All", ...Array.from(new Set(users.map((u) => u.department).filter(Boolean)))];
 
   const filtered = users.filter((u) => {
     const q = search.toLowerCase();
@@ -302,7 +301,8 @@ export function EmployeeManagementClient({ users }: { users: UserProfile[] }) {
           </div>
           <div className="relative">
             <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} className="input" style={{ minWidth: 160, paddingRight: "2.75rem" }}>
-              {departments.map((d) => <option key={d} value={d}>{d}</option>)}
+              <option value="All">All Departments</option>
+              {departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
             </select>
             <ChevronDown size={14} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2" style={{ color: "var(--text-muted)" }} />
           </div>
@@ -346,75 +346,78 @@ export function EmployeeManagementClient({ users }: { users: UserProfile[] }) {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((u, idx) => (
-                <motion.tr key={u.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: idx * 0.03 }}>
-                  <td>
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold" style={{ background: "var(--brand-dim)", color: "var(--brand)" }}>
-                        {u.name.charAt(0).toUpperCase()}
+              {filtered.map((u, idx) => {
+                const userDept = departments.find(d => d.id === u.department);
+                return (
+                  <motion.tr key={u.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: idx * 0.03 }}>
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold" style={{ background: "var(--brand-dim)", color: "var(--brand)" }}>
+                          {u.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>{u.name}</div>
+                          <div className="text-xs font-mono mt-1" style={{ color: "var(--text-muted)" }}>{u.employee_id}</div>
+                          {u.position && <div className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>{u.position}</div>}
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-semibold text-sm" style={{ color: "var(--text-primary)" }}>{u.name}</div>
-                        <div className="text-xs font-mono mt-1" style={{ color: "var(--text-muted)" }}>{u.employee_id}</div>
-                        {u.position && <div className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>{u.position}</div>}
+                    </td>
+                    <td>
+                      {userDept ? (
+                        <span className="flex items-center gap-1.5 text-sm" style={{ color: "var(--text-secondary)" }}>
+                          <Building2 size={13} style={{ color: "var(--text-muted)" }} />
+                          {userDept.name}
+                        </span>
+                      ) : (
+                        <span style={{ color: "var(--text-muted)" }}>{u.department || "—"}</span>
+                      )}
+                    </td>
+                    <td>
+                      <div className="space-y-1.5 text-xs" style={{ color: "var(--text-secondary)" }}>
+                        {u.email && <div className="flex items-center gap-1.5"><Mail size={12} style={{ color: "var(--text-muted)" }} />{u.email}</div>}
+                        {u.phone && <div className="flex items-center gap-1.5"><Phone size={12} style={{ color: "var(--text-muted)" }} />{u.phone}</div>}
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    {u.department ? (
-                      <span className="flex items-center gap-1.5 text-sm" style={{ color: "var(--text-secondary)" }}>
-                        <Building2 size={13} style={{ color: "var(--text-muted)" }} />
-                        {u.department}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleStatusToggle(u)}
+                        disabled={isPending}
+                        className={`badge ${u.status === "active" ? "badge-success" : "badge-danger"} cursor-pointer`}
+                        title="Click to toggle status"
+                      >
+                        {u.status === "active" ? <CheckCircle size={10} /> : <XCircle size={10} />}
+                        {u.status}
+                      </button>
+                    </td>
+                    <td>
+                      <span className="text-xs flex items-center gap-1" style={{ color: "var(--text-muted)" }}>
+                        <Calendar size={11} />
+                        {format(new Date(u.hire_date ?? u.created_at), "MMM yyyy")}
                       </span>
-                    ) : (
-                      <span style={{ color: "var(--text-muted)" }}>—</span>
-                    )}
-                  </td>
-                  <td>
-                    <div className="space-y-1.5 text-xs" style={{ color: "var(--text-secondary)" }}>
-                      {u.email && <div className="flex items-center gap-1.5"><Mail size={12} style={{ color: "var(--text-muted)" }} />{u.email}</div>}
-                      {u.phone && <div className="flex items-center gap-1.5"><Phone size={12} style={{ color: "var(--text-muted)" }} />{u.phone}</div>}
-                    </div>
-                  </td>
-                  <td>
-                    <button
-                      onClick={() => handleStatusToggle(u)}
-                      disabled={isPending}
-                      className={`badge ${u.status === "active" ? "badge-success" : "badge-danger"} cursor-pointer`}
-                      title="Click to toggle status"
-                    >
-                      {u.status === "active" ? <CheckCircle size={10} /> : <XCircle size={10} />}
-                      {u.status}
-                    </button>
-                  </td>
-                  <td>
-                    <span className="text-xs flex items-center gap-1" style={{ color: "var(--text-muted)" }}>
-                      <Calendar size={11} />
-                      {format(new Date(u.hire_date ?? u.created_at), "MMM yyyy")}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="flex items-center justify-center gap-1.5">
-                      <button onClick={() => setSelectedEmployee(u)} className="btn btn-sm btn-ghost" title="Assign Task" style={{ color: "var(--brand)" }}>
-                        <ClipboardList size={14} />
-                      </button>
-                      <Link href={`/admin/employees/${u.id}/logs`}>
-                        <button className="btn btn-sm btn-ghost" title="View Logs"><Eye size={14} /></button>
-                      </Link>
-                      <button onClick={() => setResetEmployee(u)} className="btn btn-sm btn-ghost" title="Reset Password" style={{ color: "var(--warning)" }}>
-                        <KeyRound size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
+                    </td>
+                    <td>
+                      <div className="flex items-center justify-center gap-1.5">
+                        <button onClick={() => setSelectedEmployee(u)} className="btn btn-sm btn-ghost" title="Assign Task" style={{ color: "var(--brand)" }}>
+                          <ClipboardList size={14} />
+                        </button>
+                        <Link href={`/admin/employees/${u.id}/logs`}>
+                          <button className="btn btn-sm btn-ghost" title="View Logs"><Eye size={14} /></button>
+                        </Link>
+                        <button onClick={() => setResetEmployee(u)} className="btn btn-sm btn-ghost" title="Reset Password" style={{ color: "var(--warning)" }}>
+                          <KeyRound size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       )}
 
       <AnimatePresence>
-        {showAddModal && <AddEmployeeModal onClose={() => setShowAddModal(false)} departments={DEPARTMENTS} />}
+        {showAddModal && <AddEmployeeModal onClose={() => setShowAddModal(false)} departments={departments} />}
         {selectedEmployee && (
           <AssignTaskModal
             employeeId={selectedEmployee.id}
